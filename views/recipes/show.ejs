@@ -1,33 +1,37 @@
 <!-- header -->
 <%- include('../partials/header') %>
 
-<article>
+<article class="recipe-detail">
   <img src="/uploads/<%= recipe.image %>" alt="<%= recipe.title %>">
   
   <h1><%= recipe.title %></h1>
   
-  <p>Category: <%= recipe.category %></p>
-  
-  <% if (recipe.tags.length > 0) { %>
-    <p>Tags: <%= recipe.tags.join(', ') %></p>
-  <% } %>
-
-  <p>By: <a href="/profile/<%= recipe.author.username %>"><%= recipe.author.username %></a></p>
-  <p>Posted: <%= recipe.createdAt.toDateString() %></p>
+  <div class="recipe-meta">
+    <span>📁 <%= recipe.category %></span>
+    <span>👤 <a href="/profile/<%= recipe.author.username %>"><%= recipe.author.username %></a></span>
+    <span>📅 <%= recipe.createdAt.toDateString() %></span>
+    <% if (recipe.tags.length > 0) { %>
+      <% recipe.tags.forEach(tag => { %>
+        <span class="recipe-tag">#<%= tag %></span>
+      <% }) %>
+    <% } %>
+  </div>
 
   <div class="recipe-body">
     <%- recipe.description %>
   </div>
 
+  <div class="recipe-actions">
   <!-- edit and delete buttons appear iff currently logged in user is recipe's author -->
   <% if (currentUser && recipe.author._id.toString() === currentUser._id.toString()) { %>
-    <a href="/recipes/<%= recipe.slug %>/edit">Edit</a>
+    <a href="/recipes/<%= recipe.slug %>/edit" class="btn btn-secondary">Edit</a>
 
     <!-- method override -->
     <form action="/recipes/<%= recipe.slug %>?_method=DELETE" method="POST">
-      <button type="submit">Delete</button>
+      <button type="submit" class="btn btn-danger">Delete</button>
     </form>
   <% } %>
+</div>
 </article>
 
 <!-- likes section -->
@@ -45,9 +49,9 @@
 
 <!-- sharing section -->
 <section class="sharing-section">
-  <p>Share this recipe:</p>
-  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>"  target="_blank">Share on Twitter</a> <!-- encodeURIComponent converts title and URL into format safe to include in another URL -->
-  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank">Share on Facebook</a>
+  <span>Share:</span>
+  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-twitter">Twitter</a> <!-- encodeURIComponent converts title and URL into format safe to include in another URL -->
+  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-facebook">Facebook</a>
 </section>
 
 <!-- comments section -->
@@ -59,7 +63,7 @@
     <form action="/recipes/<%= recipe.slug %>/comments" method="POST">
       <label for="body">Leave a comment</label>
       <textarea id="body" name="body" rows="3" required></textarea>
-      <button type="submit">Post Comment</button>
+      <button type="submit" class="btn btn-primary">Post Comment</button>
     </form>
   <% } else { %>
     <p><a href="/login">Log in</a> to leave a comment.</p> 
@@ -68,21 +72,23 @@
   <% if (comments.length === 0) { %>
     <p>No comments yet. Be the first!</p>
   <% } else { %>
+    <div class="comments-list">
     <% comments.forEach(comment => { %>
       <div class="comment">
-        <p>
-          <strong><a href="/profile/<%= comment.author.username %>"><%= comment.author.username %></a></strong>
-          <span><%= comment.createdAt.toDateString() %></span>
-        </p>
+        <div class="comment-meta"> 
+          <strong><a href="/profile/<%= comment.author.username %>"><%= comment.author.username %></a></strong>. 
+          <%= comment.createdAt.toDateString() %>
+        </div>
         <p><%= comment.body %></p>
          <!-- delete button available only for author -->
         <% if (currentUser && comment.author._id.toString() === currentUser._id.toString()) { %>
           <form action="/recipes/<%= recipe.slug %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
-            <button type="submit">Delete</button>
+            <button type="submit" class="btn btn-danger" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.7rem;">Delete</button>
           </form>
         <% } %>
       </div>
-    <% }) %>
+      <% }) %>
+    </div>
   <% } %>
 </section>
 
