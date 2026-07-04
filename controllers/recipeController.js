@@ -33,8 +33,20 @@ exports.createRecipe = async (req, res) => {
 
 exports.createRecipe = async (req, res) => {
   try {
-    const { title, description, category, tags } = req.body;
+    const { title, description, category, tags, croppedImage } = req.body;
     const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+
+    let imageFilename = 'default-recipe.png';
+
+    if (croppedImage && croppedImage.startsWith('data:image')) {
+      const base64Data = croppedImage.replace(/^data:image\/\w+;base64,/, '');
+      const filename = Date.now() + '-cropped.png';
+      const filepath = require('path').join(__dirname, '../public/uploads', filename);
+      require('fs').writeFileSync(filepath, base64Data, 'base64');
+      imageFilename = filename;
+    } else if (req.file) {
+      imageFilename = req.file.filename;
+    }
 
     const recipe = new Recipe({
       title,
@@ -42,7 +54,7 @@ exports.createRecipe = async (req, res) => {
       category,
       tags: tagsArray,
       author: req.user._id,
-      image: req.file ? req.file.filename : 'default-recipe.png'
+      image: imageFilename
     });
 
     await recipe.save();
@@ -119,7 +131,13 @@ exports.getEditRecipeForm = async (req, res) => {
       recipe.tags = tagsArray;
       recipe.updatedAt = Date.now(); // update, not create
   
-      if (req.file) {
+      if (req.body.croppedImage && req.body.croppedImage.startsWith('data:image')) {
+        const base64Data = req.body.croppedImage.replace(/^data:image\/\w+;base64,/, '');
+        const filename = Date.now() + '-cropped.png';
+        const filepath = require('path').join(__dirname, '../public/uploads', filename);
+        require('fs').writeFileSync(filepath, base64Data, 'base64');
+        recipe.image = filename;
+      } else if (req.file) {
         recipe.image = req.file.filename;
       }
   

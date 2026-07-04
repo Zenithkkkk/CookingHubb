@@ -4,22 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recipe Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 </head>
 <body>
   <nav>
-    <a href="/">Home</a>
-    <a href="/recipes">Recipes</a>
-    <!-- show different nav links depending on user's log in --> 
-    <% if (currentUser) { %>
+    <a href="/" class="nav-brand">🍳 Recipe Blog</a>
+    <div class="nav-links"> 
+      <a href="/recipes">Recipes</a>
+      <!-- show different nav links depending on user's log in --> 
+       <% if (currentUser) { %>
         <!-- this works because we set res.locals.currentUser in app.js on every req -->
-      <a href="/profile/<%= currentUser.username %>">My Profile</a>
-      <a href="/logout">Logout</a>
-    <% } else { %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
-  </nav>
+         <a href="/profile/<%= currentUser.username %>">My Profile</a>
+         <a href="/logout">Logout</a>
+         <% } else { %>
+          <a href="/login">Login</a>
+          <a href="/register" class="nav-btn">Register</a>
+          <% } %>
+        </div>
+      </nav>
   <main>
 
   <!-- closure at footer.ejs -->

@@ -1,7 +1,8 @@
 <!-- include header-->
 <%- include('../partials/header') %>
 
-<h1>Register</h1>
+<div class="form-card">
+<h1>Create Account</h1>
 
 <!-- protection against undefined variable reading -->
 <% if (typeof error !== 'undefined' && error) { %>
@@ -21,8 +22,10 @@
   <label for="password2">Confirm Password</label>
   <input type="password" id="password2" name="password2" required>
 
-  <button type="submit">Register</button>
+  <button type="submit" class="btn btn-primary">Register</button>
 </form>
+<p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="/login">Log in</a></p>
+</div>
 
 <!-- include footer -->
 <%- include('../partials/footer') %>

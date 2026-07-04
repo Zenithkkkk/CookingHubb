@@ -1,7 +1,8 @@
 <!-- header -->
 <%- include('../partials/header') %>
 
-<h1>Login</h1>
+<div class="form-card">
+  <h1>Welcome Back</h1>
 
 <form action="/login" method="POST">
   <label for="email">Email</label>
@@ -10,8 +11,10 @@
   <label for="password">Password</label>
   <input type="password" id="password" name="password" required>
 
-  <button type="submit">Login</button>
+  <button type="submit" class="btn btn-primary">Login</button>
 </form>
+<p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="/register">Register</a></p>
+</div>
 
 <!-- footer -->
 <%- include('../partials/footer') %>
