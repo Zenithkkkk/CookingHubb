@@ -30,5 +30,62 @@
   <% } %>
 </article>
 
+<!-- likes section -->
+<section class="likes-section">
+  <% if (currentUser) { %>
+    <form action="/recipes/<%= recipe.slug %>/like" method="POST">
+      <% const alreadyLiked = recipe.likes.some(id => id.toString() === currentUser._id.toString()) %> <!-- check if authenticated user already likes this recipe-->
+      <button type="submit">
+        <%= alreadyLiked ? '❤️ Unlike' : '🤍 Like' %>
+      </button>
+    </form>
+  <% } %>
+  <p><%= recipe.likes.length %> <%= recipe.likes.length === 1 ? 'like' : 'likes' %></p>
+</section>
+
+<!-- sharing section -->
+<section class="sharing-section">
+  <p>Share this recipe:</p>
+  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>"  target="_blank">Share on Twitter</a> <!-- encodeURIComponent converts title and URL into format safe to include in another URL -->
+  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank">Share on Facebook</a>
+</section>
+
+<!-- comments section -->
+<section class="comments-section">
+  <h2>Comments (<%= comments.length %>)</h2>
+
+  <!-- only for logged in users -->
+  <% if (currentUser) { %>
+    <form action="/recipes/<%= recipe.slug %>/comments" method="POST">
+      <label for="body">Leave a comment</label>
+      <textarea id="body" name="body" rows="3" required></textarea>
+      <button type="submit">Post Comment</button>
+    </form>
+  <% } else { %>
+    <p><a href="/login">Log in</a> to leave a comment.</p> 
+  <% } %>
+
+  <% if (comments.length === 0) { %>
+    <p>No comments yet. Be the first!</p>
+  <% } else { %>
+    <% comments.forEach(comment => { %>
+      <div class="comment">
+        <p>
+          <strong><a href="/profile/<%= comment.author.username %>"><%= comment.author.username %></a></strong>
+          <span><%= comment.createdAt.toDateString() %></span>
+        </p>
+        <p><%= comment.body %></p>
+         <!-- delete button available only for author -->
+        <% if (currentUser && comment.author._id.toString() === currentUser._id.toString()) { %>
+          <form action="/recipes/<%= recipe.slug %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+            <button type="submit">Delete</button>
+          </form>
+        <% } %>
+      </div>
+    <% }) %>
+  <% } %>
+</section>
+
+
 <!-- footer -->
 <%- include('../partials/footer') %>
