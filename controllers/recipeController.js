@@ -1,5 +1,6 @@
 // recipe model
 const Recipe = require('../models/Recipe');
+const Comment = require('../models/Comment');
 
 // create recipe form
 exports.getNewRecipeForm = (req, res) => {
@@ -70,7 +71,12 @@ exports.getRecipeBySlug = async (req, res) => {
       if (!recipe) {
         return res.status(404).render('404');
       }
-      res.render('recipes/show', { recipe });
+
+      const comments = await Comment.find({ recipe: recipe._id }) // fetch all comments that belong to this recipe
+      .populate('author') // replace Id for user object (username)
+      .sort({ createdAt: -1 }); 
+
+      res.render('recipes/show', { recipe, comments });
     } catch (err) {
       console.error(err);
       res.redirect('/recipes');
