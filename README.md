@@ -28,6 +28,7 @@ A full-stack recipe sharing platform where users can create, discover, and inter
 
 ## Project Structure
 
+```
 ├── controllers/        # Request handling and application logic
 │   ├── authController.js
 │   ├── recipeController.js
@@ -50,6 +51,7 @@ A full-stack recipe sharing platform where users can create, discover, and inter
 ├── config/             # Passport and Multer configuration
 ├── middleware/         # Authentication middleware
 └── app.js              # Main application entry point
+```
 
 ## Installation & Running Locally
 
