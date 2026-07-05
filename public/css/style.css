@@ -283,6 +283,7 @@ select:focus {
   line-height: 1.8;
   font-size: 1.05rem;
   margin: 1.5rem 0;
+  white-space: pre-wrap;
 }
 
 .recipe-actions {
@@ -293,6 +294,10 @@ select:focus {
   padding: 1rem 0;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
+}
+
+.profile-info .bio {
+  white-space: pre-wrap;
 }
 
 
