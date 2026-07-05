@@ -2,7 +2,7 @@
 <%- include('../partials/header') %>
 
 <article class="recipe-detail">
-  <img src="<%= recipe.image.startsWith('http') ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+  <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
   
   <h1><%= recipe.title %></h1>
   

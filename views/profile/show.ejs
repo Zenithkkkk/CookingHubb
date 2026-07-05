@@ -22,7 +22,7 @@
     <% recipes.forEach(recipe => { %>
       <article class="recipe-card">
         <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
-        <img src="<%= recipe.image.startsWith('http') ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+        <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
         <div class="recipe-card-body">
           <h3><%= recipe.title %></h3>
           <p>Category: <%= recipe.category %></p>

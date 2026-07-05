@@ -70,7 +70,7 @@ const sampleRecipes = [
     description: 'Oven-baked potato wedges with paprika and herb dip. A crowd favorite snack.',
     category: 'Snack',
     tags: ['easy', 'party'],
-    image: 'https://images.unsplash.com/photo-1573080496216-b178042f94f7?w=800&auto=format&fit=crop'
+    image: '/images/recipes/crispy-potato-wedges.jpg'
   },
   {
     title: 'Homemade Bread Rolls',
@@ -91,7 +91,7 @@ const sampleRecipes = [
     description: 'Blended mango, yogurt, and honey. Refreshing drink for any time of day.',
     category: 'Drink',
     tags: ['refreshing', 'quick', 'vegan'],
-    image: 'https://images.unsplash.com/photo-1505252585467-126954a327d9?w=800&auto=format&fit=crop'
+    image: '/images/recipes/fresh-mango-smoothie.jpg'
   },
   {
     title: 'Avocado Toast Deluxe',
