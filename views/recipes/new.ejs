@@ -74,7 +74,7 @@
     const canvas = cropper.getCroppedCanvas({ width: 800, height: 450 });
     const result = document.getElementById('crop-result');
     result.innerHTML = '<img src="' + canvas.toDataURL() + '" style="max-width:200px; border-radius: 8px; margin-top: 0.5rem;">';
-    document.getElementById('cropped-image-data').value = canvas.toDataURL();
+    document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg', 0.7);
     document.getElementById('image').value = '';
   }
 
