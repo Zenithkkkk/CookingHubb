@@ -15,6 +15,14 @@ const imageUpdates = [
   {
     title: 'Fresh Mango Smoothie',
     image: '/images/recipes/fresh-mango-smoothie.jpg'
+  },
+  {
+    title: 'Classic Pasta Carbonara',
+    image: '/images/recipes/classic-pasta-carbonara.jpg'
+  },
+  {
+    title: 'Spicy Tuna Noodle Salad',
+    image: '/images/recipes/spicy-tuna-noodle-salad.jpg'
   }
 ];
 

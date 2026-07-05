@@ -21,14 +21,14 @@ const sampleRecipes = [
     description: 'Cold noodle salad with chili tuna, cucumber, and sesame. Great for summer lunches.',
     category: 'Lunch',
     tags: ['seafood', 'spicy', 'cold'],
-    image: 'https://images.unsplash.com/photo-1569718212665-3a8278f14579?w=800&auto=format&fit=crop'
+    image: '/images/recipes/spicy-tuna-noodle-salad.jpg'
   },
   {
     title: 'Classic Pasta Carbonara',
     description: 'Creamy pasta with pancetta, egg yolk, and parmesan. A timeless Italian dinner.',
     category: 'Dinner',
     tags: ['italian', 'comfort-food'],
-    image: 'https://images.unsplash.com/photo-1612874742237-652622158547?w=800&auto=format&fit=crop'
+    image: '/images/recipes/classic-pasta-carbonara.jpg'
   },
   {
     title: 'Garlic Butter Shrimp Pasta',
