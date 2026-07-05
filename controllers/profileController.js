@@ -40,7 +40,8 @@ exports.updateProfile = async (req, res) => {
       if (req.body.croppedImage && req.body.croppedImage.startsWith('data:image')) {
         const cloudinary = require('cloudinary').v2;
         const result = await cloudinary.uploader.upload(req.body.croppedImage, {
-          folder: 'recipe-blog'
+          folder: 'recipe-blog/profiles',
+          transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }]
         });
         updateData.profilePicture = result.secure_url;
       } else if (req.file) {

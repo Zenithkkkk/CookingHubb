@@ -25,7 +25,7 @@ exports.createRecipe = async (req, res) => {
     if (croppedImage && croppedImage.startsWith('data:image')) {
       const cloudinary = require('cloudinary').v2;
       const result = await cloudinary.uploader.upload(croppedImage, {
-        folder: 'recipe-blog'
+        folder: 'recipe-blog/recipes'
       });
       imageUrl = result.secure_url;
     } else if (req.file) {
@@ -188,7 +188,7 @@ exports.getEditRecipeForm = async (req, res) => {
       if (req.body.croppedImage && req.body.croppedImage.startsWith('data:image')) {
         const cloudinary = require('cloudinary').v2;
         const result = await cloudinary.uploader.upload(req.body.croppedImage, {
-          folder: 'recipe-blog'
+          folder: 'recipe-blog/recipes'
         });
         recipe.image = result.secure_url;
       } else if (req.file) {
