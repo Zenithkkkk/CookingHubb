@@ -37,8 +37,14 @@ exports.updateProfile = async (req, res) => {
       const updateData = { bio };
         
       // only upload if new one was uploaded
-      if (req.file) {
-        updateData.profilePicture = req.file.filename;
+      if (req.body.croppedImage && req.body.croppedImage.startsWith('data:image')) {
+        const cloudinary = require('cloudinary').v2;
+        const result = await cloudinary.uploader.upload(req.body.croppedImage, {
+          folder: 'recipe-blog'
+        });
+        updateData.profilePicture = result.secure_url;
+      } else if (req.file) {
+        updateData.profilePicture = req.file.path;
       }
   
       await User.findByIdAndUpdate(req.user._id, updateData);
