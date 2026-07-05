@@ -287,16 +287,29 @@ select:focus {
 }
 
 .recipe-card {
+  position: relative;
   background: var(--color-surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.recipe-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.recipe-card-author {
+  position: relative;
+  z-index: 2;
 }
 
 .recipe-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 14px 28px rgba(224, 123, 57, 0.25), 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .recipe-card img {
@@ -313,6 +326,7 @@ select:focus {
 .recipe-card-body h3 {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
+  color: var(--color-primary);
 }
 
 .recipe-card-body p {
