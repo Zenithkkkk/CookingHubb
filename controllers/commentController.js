@@ -3,16 +3,21 @@ const Recipe = require('../models/Recipe');
 
 exports.createComment = async (req, res) => {
     try {
-      const recipe = await Recipe.findOne({ slug: req.params.slug }); // find recipe by slug from URL
+      const recipe = await Recipe.findOne({ slug: req.params.slug });
       if (!recipe) return res.status(404).render('404');
-        
-      // comment linked to recipe and logged-in user
+
+      const rating = parseInt(req.body.rating, 10);
+      if (!rating || rating < 1 || rating > 5) {
+        return res.redirect(`/recipes/${recipe.slug}`);
+      }
+
       await Comment.create({
         body: req.body.body,
+        rating,
         author: req.user._id,
         recipe: recipe._id
       });
-      // immediately after, return to login to display comment
+
       res.redirect(`/recipes/${recipe.slug}`);
     } catch (err) {
       console.error(err);

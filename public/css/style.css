@@ -212,6 +212,73 @@ select:focus {
   border-left: 4px solid var(--color-error);
 }
 
+/* ── SEARCH BAR ── */
+.search-bar {
+  background: var(--color-surface);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.search-bar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 160px;
+}
+
+.search-field-wide {
+  flex: 2;
+  min-width: 220px;
+}
+
+.search-field label {
+  margin-bottom: 0.35rem;
+}
+
+.search-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding-bottom: 0.1rem;
+}
+
+.search-results-count {
+  color: var(--color-text-light);
+  margin-bottom: 1rem;
+}
+
+.search-empty {
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.recipe-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.35rem 0;
+}
+
+@media (max-width: 640px) {
+  .search-actions {
+    width: 100%;
+  }
+
+  .search-actions .btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
 /* ── RECIPE GRID ── */
 .recipe-grid {
   display: grid;
@@ -345,6 +412,10 @@ select:focus {
 }
 
 .comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.85rem;
   color: var(--color-text-light);
   margin-bottom: 0.5rem;
@@ -366,6 +437,78 @@ select:focus {
   flex-direction: column;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+.recipe-average-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-light);
+}
+
+.stars-display {
+  display: inline-flex;
+  gap: 0.1rem;
+}
+
+.star {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.star-filled {
+  color: #f5a623;
+}
+
+.star-empty {
+  color: var(--color-border);
+}
+
+.star-rating-input {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.star-rating-input legend {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.35rem;
+}
+
+.star-rating-input .stars {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 0.15rem;
+}
+
+.star-rating-input input {
+  display: none;
+}
+
+.star-rating-input label {
+  font-size: 1.75rem;
+  color: var(--color-border);
+  cursor: pointer;
+  transition: color 0.15s ease;
+  margin: 0;
+  font-weight: normal;
+}
+
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label,
+.star-rating-input input:checked ~ label {
+  color: #f5a623;
+}
+
+.comment-stars .star {
+  font-size: 0.95rem;
+}
+
+.comment-date {
+  margin-left: auto;
 }
 
 

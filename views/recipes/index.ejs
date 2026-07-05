@@ -8,20 +8,87 @@
   <% } %>
 </div>
 
+<form class="search-bar" action="/recipes" method="GET">
+  <div class="search-bar-row">
+    <div class="search-field search-field-wide">
+      <label for="q">Search</label>
+      <input
+        type="text"
+        id="q"
+        name="q"
+        value="<%= searchQuery.q %>"
+        placeholder="e.g. Tuna (matches title, description, tags)"
+      >
+    </div>
+    <div class="search-field">
+      <label for="tag">Tag</label>
+      <input
+        type="text"
+        id="tag"
+        name="tag"
+        value="<%= searchQuery.tag %>"
+        placeholder="e.g. vegan, quick"
+      >
+    </div>
+  </div>
+
+  <div class="search-bar-row">
+    <div class="search-field">
+      <label for="staple">Staple Food</label>
+      <select id="staple" name="staple" title="Matches title first, then description">
+        <option value="">All staples</option>
+        <% stapleOptions.forEach(option => { %>
+          <option value="<%= option %>" <%= searchQuery.staple === option ? 'selected' : '' %>><%= option %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="search-field">
+      <label for="category">Meal Category</label>
+      <select id="category" name="category">
+        <option value="">All categories</option>
+        <% mealCategories.forEach(option => { %>
+          <option value="<%= option %>" <%= searchQuery.category === option ? 'selected' : '' %>><%= option %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="search-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <% if (hasActiveSearch) { %>
+        <a href="/recipes" class="btn btn-secondary">Clear</a>
+      <% } %>
+    </div>
+  </div>
+</form>
+
 <% if (recipes.length === 0) { %>
-  <p>No recipes yet. Be the first to add one!</p>
+  <p class="search-empty">
+    <% if (hasActiveSearch) { %>
+      No recipes match your search. Try different keywords or filters.
+    <% } else { %>
+      No recipes yet. Be the first to add one!
+    <% } %>
+  </p>
 <% } else { %>
+  <% if (hasActiveSearch) { %>
+    <p class="search-results-count"><%= recipes.length %> recipe<%= recipes.length === 1 ? '' : 's' %> found</p>
+  <% } %>
   <div class="recipe-grid">
-    <!-- one card rendered per recipe -->
     <% recipes.forEach(recipe => { %>
       <div class="recipe-card">
         <img src="<%= recipe.image.startsWith('http') ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
-        <div class="recipe-card-body"> 
-        <h2><a href="/recipes/<%= recipe.slug %>"><%= recipe.title %></a></h2>
-        <p>Category: <%= recipe.category %></p>
-        <p>By: <a href="/profile/<%= recipe.author.username %>"><%= recipe.author.username %></a></p>
+        <div class="recipe-card-body">
+          <h2><a href="/recipes/<%= recipe.slug %>"><%= recipe.title %></a></h2>
+          <p>Category: <%= recipe.category %></p>
+          <% if (recipe.tags.length > 0) { %>
+            <p class="recipe-card-tags">
+              <% recipe.tags.forEach(tag => { %>
+                <span class="recipe-tag">#<%= tag %></span>
+              <% }) %>
+            </p>
+          <% } %>
+          <p>By: <a href="/profile/<%= recipe.author.username %>"><%= recipe.author.username %></a></p>
+        </div>
       </div>
-    </div>
     <% }) %>
   </div>
 <% } %>

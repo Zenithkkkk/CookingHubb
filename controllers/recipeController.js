@@ -2,6 +2,13 @@
 const Recipe = require('../models/Recipe');
 const Comment = require('../models/Comment');
 
+const STAPLE_OPTIONS = ['Rice', 'Noodle', 'Pasta', 'Bread', 'Potato', 'Quinoa', 'Couscous'];
+const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Drink'];
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // create recipe form
 exports.getNewRecipeForm = (req, res) => {
     res.render('recipes/new');
@@ -45,9 +52,68 @@ exports.createRecipe = async (req, res) => {
 
 exports.getAllRecipes = async (req, res) => {
     try {
-        // fetch every recipe in the collection, populate fetches actual username instead of ID
-      const recipes = await Recipe.find().populate('author').sort({ createdAt: -1 });
-      res.render('recipes/index', { recipes });
+      const { q, staple, category, tag } = req.query;
+      const conditions = [];
+
+      if (q && q.trim()) {
+        const regex = new RegExp(escapeRegex(q.trim()), 'i');
+        conditions.push({
+          $or: [
+            { title: regex },
+            { description: regex },
+            { tags: regex }
+          ]
+        });
+      }
+
+      if (staple && staple.trim()) {
+        const stapleRegex = new RegExp(escapeRegex(staple.trim()), 'i');
+        conditions.push({
+          $or: [
+            { title: stapleRegex },
+            { description: stapleRegex }
+          ]
+        });
+      }
+
+      if (category && category.trim()) {
+        conditions.push({ category: category.trim() });
+      }
+
+      if (tag && tag.trim()) {
+        conditions.push({
+          tags: { $regex: escapeRegex(tag.trim()), $options: 'i' }
+        });
+      }
+
+      const filter = conditions.length ? { $and: conditions } : {};
+      let recipes = await Recipe.find(filter).populate('author').sort({ createdAt: -1 });
+
+      if (staple && staple.trim()) {
+        const stapleRegex = new RegExp(escapeRegex(staple.trim()), 'i');
+        recipes.sort((a, b) => {
+          const aTitleMatch = stapleRegex.test(a.title);
+          const bTitleMatch = stapleRegex.test(b.title);
+          if (aTitleMatch !== bTitleMatch) return aTitleMatch ? -1 : 1;
+          return b.createdAt - a.createdAt;
+        });
+      }
+
+      const searchQuery = {
+        q: q || '',
+        staple: staple || '',
+        category: category || '',
+        tag: tag || ''
+      };
+      const hasActiveSearch = Object.values(searchQuery).some(value => value.trim());
+
+      res.render('recipes/index', {
+        recipes,
+        searchQuery,
+        hasActiveSearch,
+        stapleOptions: STAPLE_OPTIONS,
+        mealCategories: MEAL_CATEGORIES
+      });
     } catch (err) {
       console.error(err);
       res.redirect('/');
@@ -62,11 +128,21 @@ exports.getRecipeBySlug = async (req, res) => {
         return res.status(404).render('404');
       }
 
-      const comments = await Comment.find({ recipe: recipe._id }) // fetch all comments that belong to this recipe
-      .populate('author') // replace Id for user object (username)
-      .sort({ createdAt: -1 }); 
+      const comments = await Comment.find({ recipe: recipe._id })
+      .populate('author')
+      .sort({ createdAt: -1 });
 
-      res.render('recipes/show', { recipe, comments });
+      const ratedComments = comments.filter(comment => comment.rating);
+      const averageRating = ratedComments.length
+        ? (ratedComments.reduce((sum, comment) => sum + comment.rating, 0) / ratedComments.length)
+        : null;
+
+      res.render('recipes/show', {
+        recipe,
+        comments,
+        averageRating,
+        reviewCount: ratedComments.length
+      });
     } catch (err) {
       console.error(err);
       res.redirect('/recipes');

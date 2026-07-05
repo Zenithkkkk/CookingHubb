@@ -7,6 +7,13 @@ const CommentSchema = new mongoose.Schema({
       trim: true
     },
 
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+    },
+
     author: {
         type: mongoose.Schema.Types.ObjectId, // store ID, not copy of user's data
         ref: 'User',
