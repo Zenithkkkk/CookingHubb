@@ -7,45 +7,22 @@ exports.getNewRecipeForm = (req, res) => {
     res.render('recipes/new');
   };
 
-/*   // pull text fields out of the submitted form data
-exports.createRecipe = async (req, res) => {
-    try {
-      const { title, description, category, tags } = req.body;
-      const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
-      // create recipe instance
-      const recipe = new Recipe({
-        title,
-        description,
-        category,
-        tags: tagsArray,
-        author: req.user._id,
-        image: req.file ? req.file.filename : 'default-recipe.png'
-      });
-
-      // write to mongoDB
-      await recipe.save();
-    res.redirect(`/recipes/${recipe.slug}`);
-  } catch (err) {
-    console.error(err);
-    res.render('recipes/new', { error: 'Could not create recipe. Please check your inputs.' });
-  }
-}; */
-
+// pull text fields out of the submitted form data
 exports.createRecipe = async (req, res) => {
   try {
     const { title, description, category, tags, croppedImage } = req.body;
     const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
 
-    let imageFilename = 'default-recipe.png';
+    let imageUrl = 'default-recipe.png';
 
     if (croppedImage && croppedImage.startsWith('data:image')) {
-      const base64Data = croppedImage.replace(/^data:image\/\w+;base64,/, '');
-      const filename = Date.now() + '-cropped.png';
-      const filepath = require('path').join(__dirname, '../public/uploads', filename);
-      require('fs').writeFileSync(filepath, base64Data, 'base64');
-      imageFilename = filename;
+      const cloudinary = require('cloudinary').v2;
+      const result = await cloudinary.uploader.upload(croppedImage, {
+        folder: 'recipe-blog'
+      });
+      imageUrl = result.secure_url;
     } else if (req.file) {
-      imageFilename = req.file.filename;
+      imageUrl = req.file.path;
     }
 
     const recipe = new Recipe({
@@ -54,7 +31,7 @@ exports.createRecipe = async (req, res) => {
       category,
       tags: tagsArray,
       author: req.user._id,
-      image: imageFilename
+      image: imageUrl
     });
 
     await recipe.save();
@@ -64,6 +41,7 @@ exports.createRecipe = async (req, res) => {
     res.render('recipes/new', { error: err.message });
   }
 };
+   
 
 exports.getAllRecipes = async (req, res) => {
     try {
@@ -132,13 +110,13 @@ exports.getEditRecipeForm = async (req, res) => {
       recipe.updatedAt = Date.now(); // update, not create
   
       if (req.body.croppedImage && req.body.croppedImage.startsWith('data:image')) {
-        const base64Data = req.body.croppedImage.replace(/^data:image\/\w+;base64,/, '');
-        const filename = Date.now() + '-cropped.png';
-        const filepath = require('path').join(__dirname, '../public/uploads', filename);
-        require('fs').writeFileSync(filepath, base64Data, 'base64');
-        recipe.image = filename;
+        const cloudinary = require('cloudinary').v2;
+        const result = await cloudinary.uploader.upload(req.body.croppedImage, {
+          folder: 'recipe-blog'
+        });
+        recipe.image = result.secure_url;
       } else if (req.file) {
-        recipe.image = req.file.filename;
+        recipe.image = req.file.path;
       }
   
       await recipe.save();

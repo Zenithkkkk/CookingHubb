@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 
 <div class="profile-header">
-  <img src="/uploads/<%= profileUser.profilePicture %>" alt="<%= profileUser.username %>'s profile picture">
+  <img src="<%= profileUser.profilePicture.startsWith('http') ? profileUser.profilePicture : '/images/default-avatar.png' %>" alt="<%= profileUser.username %>'s profile picture">
   <div class="profile-info"> 
   <h1><%= profileUser.username %></h1>
   <p><%= profileUser.bio || 'No bio yet.' %></p> 
@@ -21,7 +21,7 @@
   <div class="recipe-grid">
     <% recipes.forEach(recipe => { %>
       <div class="recipe-card">
-        <img src="/uploads/<%= recipe.image %>" alt="<%= recipe.title %>">
+        <img src="<%= recipe.image.startsWith('http') ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
         <h3><a href="/recipes/<%= recipe.slug %>"><%= recipe.title %></a></h3>
         <p>Category: <%= recipe.category %></p>
       </div>
