@@ -3,27 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title >Recipe Blog</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <title>Smart CookingHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 </head>
 <body>
   <nav>
-    <a href="/" class="nav-brand">🍳 Recipe Blog</a>
-    <div class="nav-links"> 
-      <a href="/recipes">Recipes</a>
-      <!-- show different nav links depending on user's log in --> 
-       <% if (currentUser) { %>
-        <!-- this works because we set res.locals.currentUser in app.js on every req -->
-         <a href="/profile/<%= currentUser.username %>">My Profile</a>
-         <a href="/logout">Logout</a>
-         <% } else { %>
-          <a href="/login">Login</a>
-          <a href="/register" class="nav-btn">Register</a>
-          <% } %>
+    <a href="/" class="nav-brand">🍳 Smart CookingHub</a>
+    <div class="nav-center-links">
+      <a href="/recipes"><%= t('nav.recipes') %></a>
+      <% if (currentUser) { %>
+        <a href="/recipes/liked"><%= t('nav.likedRecipes') %></a>
+        <a href="/profile/<%= currentUser.username %>"><%= t('nav.myProfile') %></a>
+      <% } %>
+      <div class="nav-center-lang">
+        <span class="nav-center-emojis"></span>
+        <div class="lang-switch">
+          <select
+            class="lang-select"
+            aria-label="Select language"
+            onchange="window.location.href='/language?lang='+this.value+'&next='+encodeURIComponent(window.location.pathname + window.location.search)"
+          >
+            <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Germany</option>
+            <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Spanish</option>
+            <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>Chinese</option>
+            <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+          </select>
         </div>
-      </nav>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <% if (currentUser) { %>
+        <a href="/logout"><%= t('nav.logout') %></a>
+      <% } else { %>
+        <a href="/login"><%= t('nav.login') %></a>
+        <a href="/register" class="nav-btn"><%= t('nav.register') %></a>
+      <% } %>
+    </div>
+  </nav>
   <main>
 
   <!-- closure at footer.ejs -->

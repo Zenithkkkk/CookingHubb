@@ -120,6 +120,19 @@ exports.getAllRecipes = async (req, res) => {
     }
   };
 
+exports.getLikedRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find({ likes: req.user._id })
+      .populate('author')
+      .sort({ createdAt: -1 });
+
+    res.render('recipes/liked', { recipes });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/recipes');
+  }
+};
+
 exports.getRecipeBySlug = async (req, res) => {
     try {
         // req.params.slug comes from URL itself, if no matched recipes, render a 404

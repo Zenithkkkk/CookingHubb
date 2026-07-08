@@ -10,11 +10,11 @@ const MONGODB_URI =
 
 const sampleRecipes = [
   {
-    title: 'Tuna Rice Bowl',
+    title: 'Tuna Rice',
     description: 'A quick lunch bowl with steamed rice, seared tuna, avocado, and soy dressing. Perfect for meal prep.',
     category: 'Lunch',
     tags: ['seafood', 'quick', 'healthy'],
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop'
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgvLz7fhMGW_5G3TI2IGnqrM1w396FiP4NESOzp_2nXw&s=10'
   },
   {
     title: 'Spicy Tuna Noodle Salad',
@@ -70,7 +70,7 @@ const sampleRecipes = [
     description: 'Oven-baked potato wedges with paprika and herb dip. A crowd favorite snack.',
     category: 'Snack',
     tags: ['easy', 'party'],
-    image: '/images/recipes/crispy-potato-wedges.jpg'
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg55wgOHJGp0Rqd_ufd741p1lfsEGIQrHjxycHumDmdw&s=10'
   },
   {
     title: 'Homemade Bread Rolls',

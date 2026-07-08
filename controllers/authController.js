@@ -18,7 +18,7 @@ exports.postRegister = async (req, res, next) => {
         // validation: email must include "@"
         if (!emailLower.includes('@')) {
           return res.render('auth/register', {
-            error: "Email format is invalid (must include '@')",
+            errorKey: 'auth.emailInvalid',
             username,
             email: normalizedEmail
           });
@@ -27,7 +27,7 @@ exports.postRegister = async (req, res, next) => {
         // validation: password must be longer than 6 characters
         if (typeof password !== 'string' || password.length <= 6) {
           return res.render('auth/register', {
-            error: 'Password must be longer than 6 characters',
+            errorKey: 'auth.passwordTooShort',
             username,
             email: normalizedEmail
           });
@@ -35,11 +35,11 @@ exports.postRegister = async (req, res, next) => {
 
         // validation, if passwords don't match, re-render form with error message & keep username/email fields
         if (password !== password2) {
-          return res.render('auth/register', { error: 'Passwords do not match', username, email: normalizedEmail });
+          return res.render('auth/register', { errorKey: 'auth.passwordsDontMatch', username, email: normalizedEmail });
         }
         const existingUser = await User.findOne({ $or: [{ email: emailLower }, { username }] });
     if (existingUser) { // check if email or username is already registered
-      return res.render('auth/register', { error: 'Email or username already in use', username, email: normalizedEmail });
+      return res.render('auth/register', { errorKey: 'auth.emailOrUsernameInUse', username, email: normalizedEmail });
     }
     const salt = await bcrypt.genSalt(10); // generate random string (hash uniqueness), where 10 is cost factor, to make algorithm slow and resist brute force attacks
     const hashedPassword = await bcrypt.hash(password, salt); // combines password and salt, this is what gets actually stored
@@ -59,7 +59,7 @@ exports.postRegister = async (req, res, next) => {
 
     } catch (err) {
       console.error(err);
-      res.render('auth/register', { error: 'Something went wrong, please try again' });
+      res.render('auth/register', { errorKey: 'auth.somethingWentWrong' });
     }
   };
 
@@ -76,13 +76,14 @@ exports.postRegister = async (req, res, next) => {
     passport.authenticate('local', { failureFlash: false }, (err, user, info) => {
       if (err) return next(err);
       if (!user) {
-        let message = info && info.message ? info.message : 'Login failed';
+        let errorKey = 'auth.loginFailed';
+        const message = info && info.message ? info.message : '';
         if (message === 'No account found with that email') {
-            message = 'No account found with that email';
+          errorKey = 'auth.noAccountFound';
         } else if (message === 'Incorrect password') {
-            message = 'Incorrect password';
+          errorKey = 'auth.incorrectPassword';
         }
-        return res.status(401).render('auth/login', { error: message, email, password });
+        return res.status(401).render('auth/login', { errorKey, email, password });
       }
 
       return req.logIn(user, (err2) => {

@@ -9,8 +9,16 @@ const MONGODB_URI =
 
 const imageUpdates = [
   {
+    title: 'Tuna Rice',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgvLz7fhMGW_5G3TI2IGnqrM1w396FiP4NESOzp_2nXw&s=10'
+  },
+  {
+    title: 'Tuna Rice Bowl',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgvLz7fhMGW_5G3TI2IGnqrM1w396FiP4NESOzp_2nXw&s=10'
+  },
+  {
     title: 'Crispy Potato Wedges',
-    image: '/images/recipes/crispy-potato-wedges.jpg'
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg55wgOHJGp0Rqd_ufd741p1lfsEGIQrHjxycHumDmdw&s=10'
   },
   {
     title: 'Fresh Mango Smoothie',

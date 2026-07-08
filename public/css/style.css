@@ -57,9 +57,10 @@ h1, h2, h3 {
 nav {
   background-color: var(--color-text);
   padding: 1rem 2rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -72,20 +73,78 @@ nav .nav-brand {
   font-weight: bold;
 }
 
-nav .nav-links {
+.nav-center-links {
   display: flex;
-  gap: 1.5rem;
+  justify-content: center;
+  gap: calc(2.4rem + 10px);
+  align-items: center;
+  transform: translateX(-75px);
+}
+
+.nav-center-links a {
+  color: #fff;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-center-emojis {
+  margin-left: 0;
+  font-size: 1.35rem;
+}
+
+.nav-center-lang {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+  gap: 0px;
+}
+
+.lang-switch {
+  display: flex;
   align-items: center;
 }
 
-nav .nav-links a {
+.lang-select {
+  background: #fff;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.lang-select:hover,
+.lang-select:focus {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary-dark);
+  outline: none;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-actions a {
   color: #fff;
   font-size: 0.95rem;
 }
 
-nav .nav-links a:hover {
+.nav-center-links a:hover,
+.nav-actions a:hover {
   color: var(--color-primary);
   text-decoration: none;
+}
+
+.nav-center-links a:hover {
+  background-color: rgba(255, 255, 255, 0.22);
 }
 
 .nav-btn {
@@ -569,14 +628,50 @@ footer {
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   nav {
+    /* Mobile navbar:
+       Brand on top, 3 buttons in one row below,
+       Logout bottom-right */
+    display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
   }
 
-  .nav-links {
-    flex-wrap: wrap;
+  .nav-center-links {
+    width: 100%;
     justify-content: center;
+    flex-wrap: wrap; /* allow emoji/language to move to next line */
+    transform: none;
+    gap: 16px;
+  }
+
+  .nav-center-links a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .nav-center-lang {
+    flex-basis: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .nav-center-emojis {
+    margin-left: 0;
+    font-size: 1.15rem;
+  }
+
+  .nav-center-links a {
+    font-size: 1.05rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
   }
 
   .profile-header {

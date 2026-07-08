@@ -2,30 +2,32 @@
 <%- include('../partials/header') %>
 
 <div class="form-card">
-<h1>Create Account</h1>
+<h1><%= t('auth.createAccount') %></h1>
 
 <!-- protection against undefined variable reading -->
-<% if (typeof error !== 'undefined' && error) { %>
-  <p class="error"><%= error %></p>
+<% if (typeof errorKey !== 'undefined' && errorKey) { %>
+  <p class="error"><%= t(errorKey) %></p>
 <% } %>
 
 <form action="/register" method="POST">
-  <label for="username">Username</label>
+  <label for="username"><%= t('auth.username') %></label>
   <input type="text" id="username" name="username" value="<%= typeof username !== 'undefined' ? username : '' %>" required>
 
-  <label for="email">Email</label>
+  <label for="email"><%= t('auth.email') %></label>
   <!-- Use text to allow custom "must include @" validation -->
   <input type="text" id="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>" required>
 
-  <label for="password">Password</label>
+  <label for="password"><%= t('auth.password') %></label>
   <input type="password" id="password" name="password" required>
 
-  <label for="password2">Confirm Password</label>
+  <label for="password2"><%= t('auth.confirmPassword') %></label>
   <input type="password" id="password2" name="password2" required>
 
-  <button type="submit" class="btn btn-primary">Register</button>
+  <button type="submit" class="btn btn-primary"><%= t('auth.registerButton') %></button>
 </form>
-<p style="margin-top: 1rem; text-align: center;">Already have an account? <a href="/login">Log in</a></p>
+<p style="margin-top: 1rem; text-align: center;">
+  <%= t('auth.alreadyHaveAccount') %> <a href="/login"><%= t('auth.loginLink') %></a>
+</p>
 </div>
 
 <!-- include footer -->

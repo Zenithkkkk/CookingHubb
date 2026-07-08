@@ -2,15 +2,15 @@
 <%- include('../partials/header') %>
 
 <div class="form-card">
-  <h1>Welcome Back</h1>
+  <h1><%= t('auth.welcomeBack') %></h1>
 
   <!-- show login error message if provided -->
-  <% if (typeof error !== 'undefined' && error) { %>
-    <p class="error"><%= error %></p>
+  <% if (typeof errorKey !== 'undefined' && errorKey) { %>
+    <p class="error"><%= t(errorKey) %></p>
   <% } %>
 
 <form action="/login" method="POST">
-  <label for="email">Email</label>
+  <label for="email"><%= t('auth.email') %></label>
   <input
     type="email"
     id="email"
@@ -19,7 +19,7 @@
     required
   >
 
-  <label for="password">Password</label>
+  <label for="password"><%= t('auth.password') %></label>
   <input
     type="password"
     id="password"
@@ -28,9 +28,11 @@
     required
   >
 
-  <button type="submit" class="btn btn-primary">Login</button>
+  <button type="submit" class="btn btn-primary"><%= t('auth.loginButton') %></button>
 </form>
-<p style="margin-top: 1rem; text-align: center;">Don't have an account? <a href="/register">Register</a></p>
+<p style="margin-top: 1rem; text-align: center;">
+  <%= t('auth.dontHaveAccount') %> <a href="/register"><%= t('auth.registerButton') %></a>
+</p>
 </div>
 
 <!-- footer -->

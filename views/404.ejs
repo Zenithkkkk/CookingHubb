@@ -1,9 +1,9 @@
 <!-- header -->
 <%- include('partials/header') %>
 
-<h1>404 - Page Not Found</h1>
-<p>The recipe you're looking for doesn't exist.</p>
-<a href="/recipes">Back to Recipes</a>
+<h1><%= t('page.notFoundTitle') %></h1>
+<p><%= t('page.notFoundMessage') %></p>
+<a href="/recipes"><%= t('common.backToRecipes') %></a>
 
 <!-- footer -->
 <%- include('partials/footer') %>

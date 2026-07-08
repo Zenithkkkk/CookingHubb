@@ -2,46 +2,46 @@
 <%- include('../partials/header') %>
 
 <div class="page-header">
-  <h1>Edit Recipe</h1>
+  <h1><%= t('page.editRecipe') %></h1>
 </div>
 
 <form action="/recipes/<%= recipe.slug %>?_method=PUT" method="POST" enctype="multipart/form-data">
-  <label for="title">Title</label>
+  <label for="title"><%= t('form.title') %></label>
   <input type="text" id="title" name="title" value="<%= recipe.title %>" required> <!-- value= prefills the input with existing value so user does not have to retype everything -->
 
-  <label for="description">Description / Instructions</label>
+  <label for="description"><%= t('form.descriptionInstructions') %></label>
   <textarea id="description" name="description" rows="10" required><%= recipe.description %></textarea>
 
-  <label for="category">Category</label>
+  <label for="category"><%= t('form.categoryLabel') %></label>
   <select id="category" name="category" required>
-    <option value="">Select a category</option>
-    <option value="Breakfast" <%= recipe.category === 'Breakfast' ? 'selected' : '' %>>Breakfast</option>
-    <option value="Lunch" <%= recipe.category === 'Lunch' ? 'selected' : '' %>>Lunch</option>
-    <option value="Dinner" <%= recipe.category === 'Dinner' ? 'selected' : '' %>>Dinner</option>
-    <option value="Dessert" <%= recipe.category === 'Dessert' ? 'selected' : '' %>>Dessert</option>
-    <option value="Snack" <%= recipe.category === 'Snack' ? 'selected' : '' %>>Snack</option>
-    <option value="Drink" <%= recipe.category === 'Drink' ? 'selected' : '' %>>Drink</option>
+    <option value=""><%= t('categories.selectCategory') %></option>
+    <option value="Breakfast" <%= recipe.category === 'Breakfast' ? 'selected' : '' %>><%= t('categories.Breakfast') %></option>
+    <option value="Lunch" <%= recipe.category === 'Lunch' ? 'selected' : '' %>><%= t('categories.Lunch') %></option>
+    <option value="Dinner" <%= recipe.category === 'Dinner' ? 'selected' : '' %>><%= t('categories.Dinner') %></option>
+    <option value="Dessert" <%= recipe.category === 'Dessert' ? 'selected' : '' %>><%= t('categories.Dessert') %></option>
+    <option value="Snack" <%= recipe.category === 'Snack' ? 'selected' : '' %>><%= t('categories.Snack') %></option>
+    <option value="Drink" <%= recipe.category === 'Drink' ? 'selected' : '' %>><%= t('categories.Drink') %></option>
   </select>
 
-  <label for="tags">Tags (comma separated)</label>
+  <label for="tags"><%= t('form.tagsLabel') %></label>
   <input type="text" id="tags" name="tags" value="<%= recipe.tags.join(', ') %>">
 
-  <label for="image">Replace Image (optional)</label>
+  <label for="image"><%= t('actions.replaceImageOptional') %></label>
   <input type="file" id="image" name="image" accept="image/*" onchange="loadCropper(this)">
 
   <div id="cropper-container" style="display:none; margin-top: 1rem;">
     <img id="crop-preview" style="max-width: 100%;">
     <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
-      <button type="button" class="btn btn-primary" onclick="cropImage()">Crop Image</button>
-      <button type="button" class="btn btn-secondary" onclick="resetCropper()">Reset</button>
+      <button type="button" class="btn btn-primary" onclick="cropImage()"><%= t('actions.cropImage') %></button>
+      <button type="button" class="btn btn-secondary" onclick="resetCropper()"><%= t('actions.reset') %></button>
     </div>
   </div>
 
   <input type="hidden" id="cropped-image-data" name="croppedImage">
   <div id="crop-result" style="margin-top: 0.5rem;"></div>
-  <p style="font-size: 0.85rem; color: var(--color-text-light);">Current image: <%= recipe.image %></p>
+  <p style="font-size: 0.85rem; color: var(--color-text-light);"><%= t('actions.currentImage', { image: recipe.image }) %></p>
 
-  <button type="submit" class="btn btn-primary">Update Recipe</button>
+  <button type="submit" class="btn btn-primary"><%= t('actions.updateRecipe') %></button>
 </form>
 
 <script>

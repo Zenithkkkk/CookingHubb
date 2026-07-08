@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo').default;
 const passport = require('passport');
 const methodOverride = require('method-override');
 const path = require('path');
+const { normalizeLang, t: translate } = require('./config/i18n');
 
 const app = express();
 
@@ -42,12 +43,15 @@ app.use(passport.session()); // remembers who's logged in accross requests
 // global variable so every EJS view knows who's logged in
 app.use((req, res, next) => { // this func runs on every request before the route handler
   res.locals.currentUser = req.user || null; // req.user set by passport when smn logs in, with .currentUser every EJS template automatically has access to logged-in user
+  res.locals.lang = normalizeLang(req.session.lang);
+  res.locals.t = (key, params) => translate(res.locals.lang, key, params);
   next();
 });
 
 // routes 
 app.get('/', (req, res) => res.redirect('/recipes'));
 app.use('/', require('./routes/authRoutes')); //any route defined here is mounted at /routes/..
+app.use('/', require('./routes/languageRoutes'));
 app.use('/recipes', require('./routes/recipeRoutes')); // mount routes under /recipe
 app.use('/profile', require('./routes/profileRoutes'));
 
