@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 
 <div class="profile-header">
-  <img src="<%= profileUser.profilePicture.startsWith('http') ? profileUser.profilePicture : '/images/default-avatar.png' %>" alt="<%= profileUser.username %>'s profile picture">
+  <img src="<%= profileUser.profilePicture.startsWith('http') || profileUser.profilePicture.startsWith('/') ? profileUser.profilePicture : '/images/default-avatar.png' %>" alt="<%= profileUser.username %>'s profile picture">
   <div class="profile-info"> 
   <h1><%= profileUser.username %></h1>
   <p><%= profileUser.bio || t('profile.noBioYet') %></p> 
