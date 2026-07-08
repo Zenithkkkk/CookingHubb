@@ -24,11 +24,11 @@
   <div class="recipe-actions">
   <!-- edit and delete buttons appear iff currently logged in user is recipe's author -->
   <% if (currentUser && recipe.author._id.toString() === currentUser._id.toString()) { %>
-    <a href="/recipes/<%= recipe.slug %>/edit" class="btn btn-secondary">Edit</a>
+    <a href="/recipes/<%= recipe.slug %>/edit" class="btn btn-secondary"><%= t('actions.edit') %></a>
 
     <!-- method override -->
     <form action="/recipes/<%= recipe.slug %>?_method=DELETE" method="POST">
-      <button type="submit" class="btn btn-danger">Delete</button>
+      <button type="submit" class="btn btn-danger"><%= t('actions.delete') %></button>
     </form>
   <% } %>
 </div>
@@ -40,23 +40,23 @@
     <form action="/recipes/<%= recipe.slug %>/like" method="POST">
       <% const alreadyLiked = recipe.likes.some(id => id.toString() === currentUser._id.toString()) %> <!-- check if authenticated user already likes this recipe-->
       <button type="submit">
-        <%= alreadyLiked ? '❤️ Unlike' : '🤍 Like' %>
+        <%= alreadyLiked ? '❤️ ' + t('like.unlike') : '🤍 ' + t('like.like') %>
       </button>
     </form>
   <% } %>
-  <p><%= recipe.likes.length %> <%= recipe.likes.length === 1 ? 'like' : 'likes' %></p>
+  <p><%= recipe.likes.length %> <%= recipe.likes.length === 1 ? t('like.one') : t('like.many') %></p>
 </section>
 
 <!-- sharing section -->
 <section class="sharing-section">
-  <span>Share:</span>
-  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-twitter">Twitter</a> <!-- encodeURIComponent converts title and URL into format safe to include in another URL -->
-  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-facebook">Facebook</a>
+  <span><%= t('sharing.shareLabel') %></span>
+  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-twitter"><%= t('sharing.twitter') %></a> <!-- encodeURIComponent converts title and URL into format safe to include in another URL -->
+  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-facebook"><%= t('sharing.facebook') %></a>
 </section>
 
 <!-- comments section -->
 <section class="comments-section">
-  <h2>Comments (<%= comments.length %>)</h2>
+  <h2><%= t('comments.title', { count: comments.length }) %></h2>
 
   <% if (averageRating !== null) { %>
     <p class="recipe-average-rating">
@@ -65,14 +65,14 @@
           <span class="star <%= i <= Math.round(averageRating) ? 'star-filled' : 'star-empty' %>">★</span>
         <% } %>
       </span>
-      <span><%= averageRating.toFixed(1) %> / 5 (<%= reviewCount %> <%= reviewCount === 1 ? 'review' : 'reviews' %>)</span>
+      <span><%= averageRating.toFixed(1) %> / 5 (<%= reviewCount %> <%= reviewCount === 1 ? t('review.one') : t('review.many') %>)</span>
     </p>
   <% } %>
 
   <% if (currentUser) { %>
     <form class="comment-form" action="/recipes/<%= recipe.slug %>/comments" method="POST">
       <fieldset class="star-rating-input">
-        <legend>Your Rating</legend>
+        <legend><%= t('comments.yourRating') %></legend>
         <div class="stars">
           <% for (let i = 5; i >= 1; i--) { %>
             <input type="radio" id="rating-<%= i %>" name="rating" value="<%= i %>" required>
@@ -80,16 +80,16 @@
           <% } %>
         </div>
       </fieldset>
-      <label for="body">Your Review</label>
-      <textarea id="body" name="body" rows="3" placeholder="Share your thoughts about this recipe..." required></textarea>
-      <button type="submit" class="btn btn-primary">Post Review</button>
+      <label for="body"><%= t('comments.yourReview') %></label>
+      <textarea id="body" name="body" rows="3" placeholder="<%= t('comments.reviewPlaceholder') %>" required></textarea>
+      <button type="submit" class="btn btn-primary"><%= t('comments.postReview') %></button>
     </form>
   <% } else { %>
-    <p><a href="/login">Log in</a> to leave a review.</p>
+    <p><a href="/login"><%= t('auth.loginLink') %></a> <%= t('comments.loginToLeave') %></p>
   <% } %>
 
   <% if (comments.length === 0) { %>
-    <p>No reviews yet. Be the first!</p>
+    <p><%= t('comments.noReviews') %></p>
   <% } else { %>
     <div class="comments-list">
     <% comments.forEach(comment => { %>
@@ -108,7 +108,7 @@
         <p><%= comment.body %></p>
         <% if (currentUser && comment.author._id.toString() === currentUser._id.toString()) { %>
           <form action="/recipes/<%= recipe.slug %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
-            <button type="submit" class="btn btn-danger" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.7rem;">Delete</button>
+            <button type="submit" class="btn btn-danger" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.7rem;"><%= t('actions.delete') %></button>
           </form>
         <% } %>
       </div>

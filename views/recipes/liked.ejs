@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1><%= t('page.likedRecipes') %></h1>
+  <a href="/recipes" class="btn btn-secondary"><%= t('common.backToAllRecipes') %></a>
+</div>
+
+<% if (recipes.length === 0) { %>
+  <p class="search-empty"><%= t('liked.empty') %></p>
+<% } else { %>
+  <p class="search-results-count">
+    <%= recipes.length === 1 ? t('liked.countOne', { count: recipes.length }) : t('liked.countMany', { count: recipes.length }) %>
+  </p>
+  <div class="recipe-grid">
+    <% recipes.forEach(recipe => { %>
+      <article class="recipe-card">
+        <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
+        <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+        <div class="recipe-card-body">
+          <h2><%= recipe.title %></h2>
+          <p><%= t('recipes.categoryLabel') %> <%= recipe.category %></p>
+          <% if (recipe.tags.length > 0) { %>
+            <p class="recipe-card-tags">
+              <% recipe.tags.forEach(tag => { %>
+                <span class="recipe-tag">#<%= tag %></span>
+              <% }) %>
+            </p>
+          <% } %>
+          <p><%= t('recipes.byLabel') %> <a href="/profile/<%= recipe.author.username %>" class="recipe-card-author"><%= recipe.author.username %></a></p>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>
