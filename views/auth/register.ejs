@@ -14,7 +14,8 @@
   <input type="text" id="username" name="username" value="<%= typeof username !== 'undefined' ? username : '' %>" required>
 
   <label for="email">Email</label>
-  <input type="email" id="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>" required>
+  <!-- Use text to allow custom "must include @" validation -->
+  <input type="text" id="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>" required>
 
   <label for="password">Password</label>
   <input type="password" id="password" name="password" required>
