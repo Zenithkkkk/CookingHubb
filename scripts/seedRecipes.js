@@ -5,8 +5,11 @@ const User = require('../models/User');
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  process.env.MONGO_URI ||
-  'mongodb://127.0.0.1:27017/recipeapp';
+  process.env.MONGO_URI;
+
+if (!MONGODB_URI) {
+  throw new Error('Missing MONGODB_URI or MONGO_URI in environment variables.');
+}
 
 const sampleRecipes = [
   {
