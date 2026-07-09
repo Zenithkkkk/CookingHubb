@@ -25,6 +25,7 @@ router.put('/:slug', isAuthenticated, upload.single('image'), recipeController.u
 router.delete('/:slug', isAuthenticated, recipeController.deleteRecipe);
 
 router.post('/:slug/comments', isAuthenticated, commentController.createComment); // comments
+router.get('/:slug/comments/:commentId/translate', commentController.translateComment);
 router.delete('/:slug/comments/:commentId', isAuthenticated, commentController.deleteComment); // delete comment by its ID
 router.post('/:slug/like', isAuthenticated, commentController.toggleLike); // toggle like on that recipe
 

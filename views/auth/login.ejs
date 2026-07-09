@@ -10,12 +10,13 @@
   <% } %>
 
 <form action="/login" method="POST">
-  <label for="email"><%= t('auth.email') %></label>
+  <label for="credential"><%= t('auth.emailOrPhone') %></label>
   <input
-    type="email"
-    id="email"
-    name="email"
-    value="<%= typeof email !== 'undefined' ? email : '' %>"
+    type="text"
+    id="credential"
+    name="credential"
+    placeholder="<%= t('auth.emailOrPhonePlaceholder') %>"
+    value="<%= typeof credential !== 'undefined' ? credential : '' %>"
     required
   >
 

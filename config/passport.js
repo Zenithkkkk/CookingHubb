@@ -4,13 +4,20 @@ const User = require('../models/User'); // user model looks up user in db
 
 module.exports = function(passport) {
     passport.use(new LocalStrategy( //define how passport checks credential (strategy)
-      { usernameField: 'email' }, // passport looks for username, but we log in with email
-      async (email, password, done) => { //passport calls func with what user typed
+      { usernameField: 'credential' }, // allow login with email or phone
+      async (credential, password, done) => { //passport calls func with what user typed
         try {
-            // look up user in db by email
-            const user = await User.findOne({ email });
+            const normalizedCredential = typeof credential === 'string' ? credential.trim() : '';
+            const credentialDigits = normalizedCredential.replace(/\D/g, '');
+            const normalizedPhone = normalizedCredential.startsWith('+') ? `+${credentialDigits}` : '';
+            const user = await User.findOne({
+              $or: [
+                { email: normalizedCredential.toLowerCase() },
+                ...(normalizedPhone ? [{ phone: normalizedPhone }] : [])
+              ]
+            });
             if (!user) {
-              return done(null, false, { message: 'No account found with that email' });
+              return done(null, false, { message: 'No account found with that email or phone' });
             }
 
             const isMatch = await bcrypt.compare(password, user.password); // bycript.compare checks passwords match

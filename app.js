@@ -26,6 +26,9 @@ mongoose.connect(process.env.MONGO_URI)
         await User.create({
           username: 'admin',
           email: 'admin@example.com',
+          phoneCountryCode: '+1',
+          phoneNumber: '0000000000',
+          phone: '+10000000000',
           password: hashedPassword,
           isAdmin: true
         });

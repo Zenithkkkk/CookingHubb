@@ -116,7 +116,14 @@
     <% comments.forEach(comment => { %>
       <div class="comment">
         <div class="comment-meta">
-          <strong><a href="/profile/<%= comment.author.username %>"><%= comment.author.username %></a></strong>
+          <a href="/profile/<%= comment.author.username %>" class="comment-author">
+            <img
+              class="comment-author-avatar"
+              src="<%= (comment.author.profilePicture && (comment.author.profilePicture.startsWith('http') || comment.author.profilePicture.startsWith('/'))) ? comment.author.profilePicture : '/images/default-avatar.png' %>"
+              alt="<%= comment.author.username %>"
+            >
+            <strong><%= comment.author.username %></strong>
+          </a>
           <% if (comment.rating) { %>
             <span class="stars-display comment-stars">
               <% for (let i = 1; i <= 5; i++) { %>
@@ -126,7 +133,20 @@
           <% } %>
           <span class="comment-date"><%= comment.createdAt.toDateString() %></span>
         </div>
-        <p><%= comment.body %></p>
+        <p class="comment-body"><%= comment.body %></p>
+        <div class="comment-translation-controls">
+          <button type="button" class="btn btn-secondary comment-translate-btn" data-comment-id="<%= comment._id %>"><%= t('translation.viewTranslation') %></button>
+          <select class="comment-translation-lang" aria-label="<%= t('translation.languageLabel') %>">
+            <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+            <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Deutsch</option>
+            <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Español</option>
+            <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>中文</option>
+          </select>
+        </div>
+        <div class="translation-pair comment-translation-pair" data-comment-translation="<%= comment._id %>" style="display:none;">
+          <p class="translation-label"><%= t('translation.translatedComment') %></p>
+          <p class="translation-content"></p>
+        </div>
         <% if (currentUser && comment.author._id.toString() === currentUser._id.toString()) { %>
           <form action="/recipes/<%= recipe.slug %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
             <button type="submit" class="btn btn-danger" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.7rem;"><%= t('actions.delete') %></button>
@@ -191,6 +211,39 @@
         return;
       }
       await fetchAndRenderTranslation();
+    });
+
+    document.querySelectorAll('.comment-translate-btn').forEach(function(button) {
+      const langSelect = button.parentElement.querySelector('.comment-translation-lang');
+      const translationPair = document.querySelector(`[data-comment-translation="${button.dataset.commentId}"]`);
+      const translationContent = translationPair.querySelector('.translation-content');
+      let commentVisible = false;
+
+      button.addEventListener('click', async function() {
+        if (commentVisible) {
+          translationPair.style.display = 'none';
+          button.textContent = texts.view;
+          commentVisible = false;
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = texts.loading;
+        try {
+          const res = await fetch(`/recipes/<%= recipe.slug %>/comments/${button.dataset.commentId}/translate?targetLang=${encodeURIComponent(langSelect.value)}`);
+          if (!res.ok) throw new Error('request_failed');
+          const data = await res.json();
+          translationContent.textContent = data.translatedBody || '';
+          translationPair.style.display = 'block';
+          button.textContent = texts.hide;
+          commentVisible = true;
+        } catch (err) {
+          alert(texts.failed);
+          button.textContent = texts.view;
+        } finally {
+          button.disabled = false;
+        }
+      });
     });
   })();
 </script>

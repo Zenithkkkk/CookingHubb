@@ -264,6 +264,28 @@ select:focus {
   margin: 0 auto;
 }
 
+.form-hint {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-light);
+  font-size: 0.92rem;
+}
+
+.phone-register-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.phone-country-select,
+.phone-number-input {
+  border-radius: 18px;
+}
+
 .error {
   color: var(--color-error);
   background: #fdecea;
@@ -618,6 +640,46 @@ select:focus {
   margin-bottom: 0.5rem;
 }
 
+.comment-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.comment-author:hover {
+  text-decoration: none;
+}
+
+.comment-author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+
+.comment-body {
+  margin-top: 0.35rem;
+}
+
+.comment-translation-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.85rem;
+}
+
+.comment-translation-controls .btn,
+.comment-translation-controls select {
+  width: auto;
+}
+
+.comment-translation-pair {
+  margin-top: 0.75rem;
+}
+
 .comment-form {
   background: var(--color-surface);
   padding: 1.5rem;
@@ -806,6 +868,15 @@ footer {
   .recipe-meta {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .phone-register-row {
+    grid-template-columns: 1fr;
+  }
+
+  .comment-translation-controls {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .recipe-title-translate-row {

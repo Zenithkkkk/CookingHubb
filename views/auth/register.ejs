@@ -3,6 +3,7 @@
 
 <div class="form-card">
 <h1><%= t('auth.createAccount') %></h1>
+<p class="form-hint"><%= t('auth.registerContactHint') %></p>
 
 <!-- protection against undefined variable reading -->
 <% if (typeof errorKey !== 'undefined' && errorKey) { %>
@@ -13,9 +14,28 @@
   <label for="username"><%= t('auth.username') %></label>
   <input type="text" id="username" name="username" value="<%= typeof username !== 'undefined' ? username : '' %>" required>
 
-  <label for="email"><%= t('auth.email') %></label>
+  <label for="email"><%= t('auth.emailOptional') %></label>
   <!-- Use text to allow custom "must include @" validation -->
-  <input type="text" id="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>" required>
+  <input type="text" id="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>">
+
+  <label for="phoneNumber"><%= t('auth.phoneOptional') %></label>
+  <div class="phone-register-row">
+    <select id="phoneCountryCode" name="phoneCountryCode" class="phone-country-select">
+      <% (phoneCountryOptions || []).forEach(option => { %>
+        <option value="<%= option.code %>" <%= (typeof phoneCountryCode !== 'undefined' ? phoneCountryCode : '+86') === option.code ? 'selected' : '' %>>
+          <%= option.code %> | <%= option.country %>
+        </option>
+      <% }) %>
+    </select>
+    <input
+      type="text"
+      id="phoneNumber"
+      name="phoneNumber"
+      class="phone-number-input"
+      value="<%= typeof phoneNumber !== 'undefined' ? phoneNumber : '' %>"
+      placeholder="<%= t('auth.phonePlaceholder') %>"
+    >
+  </div>
 
   <label for="password"><%= t('auth.password') %></label>
   <input type="password" id="password" name="password" required>

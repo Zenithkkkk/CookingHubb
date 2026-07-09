@@ -9,9 +9,26 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
 
       email: {
         type: String,
-        required: true,
         unique: true,
+        sparse: true,
         lowercase: true,
+        trim: true
+      },
+
+      phoneCountryCode: {
+        type: String,
+        trim: true
+      },
+
+      phoneNumber: {
+        type: String,
+        trim: true
+      },
+
+      phone: {
+        type: String,
+        unique: true,
+        sparse: true,
         trim: true
       },
 
@@ -44,5 +61,4 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
 });
 
 // compile schema into a user model (mongo creates a collection called users)
-module.exports = mongoose.model('User', UserSchema); 
-
+module.exports = mongoose.model('User', UserSchema);
