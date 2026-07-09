@@ -89,6 +89,15 @@ const TRANSLATIONS = {
       twitter: 'Twitter',
       facebook: 'Facebook'
     },
+    translation: {
+      viewTranslation: 'View Translation',
+      hideTranslation: 'Hide Translation',
+      languageLabel: 'Translation language',
+      loading: 'Translating...',
+      failed: 'Translation failed. Please try again later.',
+      translatedTitle: 'Translated title',
+      translatedDescription: 'Translated description'
+    },
     actions: {
       edit: 'Edit',
       delete: 'Delete',
@@ -118,6 +127,14 @@ const TRANSLATIONS = {
       tagsLabel: 'Tags (comma separated)',
       tagsPlaceholder: 'e.g. vegan, quick, italian',
       recipeImageLabel: 'Recipe Image',
+      fileUploadLabel: 'Upload image file',
+      fileUploadHelp: 'Select a local image file to crop',
+      useImageLink: 'Use image link',
+      imageLinkLabel: 'Image URL',
+      imageLinkPlaceholder: 'https://example.com/recipe.jpg',
+      loadAndCropButton: 'Load and crop',
+      imageUrlLoadError: 'Unable to load this image URL. Please make sure the link is directly accessible.',
+      imageUrlCropCorsError: 'This image URL cannot be cropped due to cross-origin restrictions. Please try another image URL or upload a file.',
       createRecipeButton: 'Create Recipe',
       updateRecipeButton: 'Update Recipe',
       tagsEmpty: 'Tags'
@@ -231,6 +248,15 @@ const TRANSLATIONS = {
       twitter: 'Twitter',
       facebook: 'Facebook'
     },
+    translation: {
+      viewTranslation: 'Übersetzung anzeigen',
+      hideTranslation: 'Übersetzung ausblenden',
+      languageLabel: 'Übersetzungssprache',
+      loading: 'Wird übersetzt...',
+      failed: 'Übersetzung fehlgeschlagen. Bitte später erneut versuchen.',
+      translatedTitle: 'Übersetzter Titel',
+      translatedDescription: 'Übersetzte Beschreibung'
+    },
     actions: {
       edit: 'Bearbeiten',
       delete: 'Löschen',
@@ -260,6 +286,14 @@ const TRANSLATIONS = {
       tagsLabel: 'Tags (kommagetrennt)',
       tagsPlaceholder: 'z.B. vegan, schnell, italienisch',
       recipeImageLabel: 'Rezeptbild',
+      fileUploadLabel: 'Bilddatei hochladen',
+      fileUploadHelp: 'Wähle eine lokale Bilddatei zum Zuschneiden',
+      useImageLink: 'Bildlink verwenden',
+      imageLinkLabel: 'Bild-URL',
+      imageLinkPlaceholder: 'https://example.com/rezept.jpg',
+      loadAndCropButton: 'Laden und zuschneiden',
+      imageUrlLoadError: 'Diese Bild-URL konnte nicht geladen werden. Bitte prüfe, ob der Link direkt erreichbar ist.',
+      imageUrlCropCorsError: 'Diese Bild-URL kann wegen CORS-Einschränkungen nicht zugeschnitten werden. Bitte nutze eine andere URL oder lade eine Datei hoch.',
       createRecipeButton: 'Rezept erstellen',
       updateRecipeButton: 'Rezept aktualisieren'
     },
@@ -372,6 +406,15 @@ const TRANSLATIONS = {
       twitter: 'Twitter',
       facebook: 'Facebook'
     },
+    translation: {
+      viewTranslation: 'Ver traducción',
+      hideTranslation: 'Ocultar traducción',
+      languageLabel: 'Idioma de traducción',
+      loading: 'Traduciendo...',
+      failed: 'La traducción falló. Inténtalo de nuevo más tarde.',
+      translatedTitle: 'Título traducido',
+      translatedDescription: 'Descripción traducida'
+    },
     actions: {
       edit: 'Editar',
       delete: 'Eliminar',
@@ -401,6 +444,14 @@ const TRANSLATIONS = {
       tagsLabel: 'Etiquetas (separadas por comas)',
       tagsPlaceholder: 'p. ej. vegano, rápido, italiano',
       recipeImageLabel: 'Imagen de la receta',
+      fileUploadLabel: 'Subir archivo de imagen',
+      fileUploadHelp: 'Selecciona un archivo de imagen local para recortar',
+      useImageLink: 'Usar enlace de imagen',
+      imageLinkLabel: 'URL de la imagen',
+      imageLinkPlaceholder: 'https://example.com/receta.jpg',
+      loadAndCropButton: 'Cargar y recortar',
+      imageUrlLoadError: 'No se pudo cargar esta URL de imagen. Verifica que el enlace sea de acceso directo.',
+      imageUrlCropCorsError: 'Esta URL de imagen no se puede recortar por restricciones de CORS. Prueba otra URL o sube un archivo.',
       createRecipeButton: 'Crear receta',
       updateRecipeButton: 'Actualizar receta'
     },
@@ -513,6 +564,15 @@ const TRANSLATIONS = {
       twitter: 'Twitter',
       facebook: 'Facebook'
     },
+    translation: {
+      viewTranslation: '查看翻译',
+      hideTranslation: '隐藏翻译',
+      languageLabel: '翻译语言',
+      loading: '正在翻译...',
+      failed: '翻译失败，请稍后重试。',
+      translatedTitle: '翻译标题',
+      translatedDescription: '翻译描述'
+    },
     actions: {
       edit: '编辑',
       delete: '删除',
@@ -542,6 +602,14 @@ const TRANSLATIONS = {
       tagsLabel: '标签（逗号分隔）',
       tagsPlaceholder: '例如：素食，快速，意大利',
       recipeImageLabel: '食谱图片',
+      fileUploadLabel: '上传图片文件',
+      fileUploadHelp: '选择本地图片文件后可裁剪',
+      useImageLink: '使用图片链接',
+      imageLinkLabel: '图片链接',
+      imageLinkPlaceholder: 'https://example.com/recipe.jpg',
+      loadAndCropButton: '加载并裁剪',
+      imageUrlLoadError: '图片链接无法加载，请确认该链接可直接访问。',
+      imageUrlCropCorsError: '该图片链接不允许裁剪（跨域限制），请更换链接或改用文件上传。',
       createRecipeButton: '创建食谱',
       updateRecipeButton: '更新食谱'
     },

@@ -5,6 +5,10 @@
   <h1><%= t('page.editRecipe') %></h1>
 </div>
 
+<% if (typeof error !== 'undefined' && error) { %>
+  <p class="error"><%= error %></p>
+<% } %>
+
 <form action="/recipes/<%= recipe.slug %>?_method=PUT" method="POST" enctype="multipart/form-data">
   <label for="title"><%= t('form.title') %></label>
   <input type="text" id="title" name="title" value="<%= recipe.title %>" required> <!-- value= prefills the input with existing value so user does not have to retype everything -->
@@ -26,63 +30,14 @@
   <label for="tags"><%= t('form.tagsLabel') %></label>
   <input type="text" id="tags" name="tags" value="<%= recipe.tags.join(', ') %>">
 
-  <label for="image"><%= t('actions.replaceImageOptional') %></label>
-  <input type="file" id="image" name="image" accept="image/*" onchange="loadCropper(this)">
-
-  <div id="cropper-container" style="display:none; margin-top: 1rem;">
-    <img id="crop-preview" style="max-width: 100%;">
-    <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
-      <button type="button" class="btn btn-primary" onclick="cropImage()"><%= t('actions.cropImage') %></button>
-      <button type="button" class="btn btn-secondary" onclick="resetCropper()"><%= t('actions.reset') %></button>
-    </div>
-  </div>
-
-  <input type="hidden" id="cropped-image-data" name="croppedImage">
-  <div id="crop-result" style="margin-top: 0.5rem;"></div>
-  <p style="font-size: 0.85rem; color: var(--color-text-light);"><%= t('actions.currentImage', { image: recipe.image }) %></p>
+  <%- include('../partials/recipeImageUpload', {
+    currentImage: recipe.image,
+    useImageUrlChecked: typeof useImageUrlChecked !== 'undefined' ? useImageUrlChecked : false,
+    imageUrlValue: typeof imageUrlValue !== 'undefined' ? imageUrlValue : ''
+  }) %>
 
   <button type="submit" class="btn btn-primary"><%= t('actions.updateRecipe') %></button>
 </form>
-
-<script>
-  let cropper;
-
-  function loadCropper(input) {
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const container = document.getElementById('cropper-container');
-        const preview = document.getElementById('crop-preview');
-        container.style.display = 'block';
-        preview.src = e.target.result;
-
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(preview, {
-          aspectRatio: 16 / 9,
-          viewMode: 1,
-        });
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
-
-  function cropImage() {
-    if (!cropper) return;
-    const canvas = cropper.getCroppedCanvas({ width: 800, height: 450 });
-    const result = document.getElementById('crop-result');
-    result.innerHTML = '<img src="' + canvas.toDataURL() + '" style="max-width:200px; border-radius: 8px; margin-top: 0.5rem;">';
-    document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg', 0.7);
-    document.getElementById('image').value = '';
-  }
-
-  function resetCropper() {
-    if (cropper) { cropper.destroy(); cropper = null; }
-    document.getElementById('cropper-container').style.display = 'none';
-    document.getElementById('crop-result').innerHTML = '';
-    document.getElementById('cropped-image-data').value = '';
-    document.getElementById('image').value = '';
-  }
-</script>
 
 <!-- footer -->
 <%- include('../partials/footer') %>

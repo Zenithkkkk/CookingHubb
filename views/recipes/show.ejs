@@ -2,9 +2,25 @@
 <%- include('../partials/header') %>
 
 <article class="recipe-detail">
-  <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
-  
-  <h1><%= recipe.title %></h1>
+  <img class="recipe-detail-image" src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+
+  <div class="recipe-title-translate-row">
+    <h1 id="recipe-original-title"><%= recipe.title %></h1>
+    <div class="translate-widget">
+      <button type="button" class="btn btn-secondary" id="translate-toggle-btn"><%= t('translation.viewTranslation') %></button>
+      <select id="translation-lang-select" aria-label="<%= t('translation.languageLabel') %>">
+        <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+        <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Deutsch</option>
+        <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Español</option>
+        <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>中文</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="title-translation-pair" class="translation-pair" style="display:none;">
+    <p class="translation-label"><%= t('translation.translatedTitle') %></p>
+    <h2 id="recipe-translated-title"></h2>
+  </div>
   
   <div class="recipe-meta">
     <span>📁 <%= recipe.category %></span>
@@ -17,8 +33,13 @@
     <% } %>
   </div>
 
-  <div class="recipe-body">
+  <div class="recipe-body" id="recipe-original-description">
     <%- recipe.description %>
+  </div>
+
+  <div id="description-translation-pair" class="translation-pair" style="display:none;">
+    <p class="translation-label"><%= t('translation.translatedDescription') %></p>
+    <p id="recipe-translated-description" class="translation-content"></p>
   </div>
 
   <div class="recipe-actions">
@@ -120,3 +141,56 @@
 
 <!-- footer -->
 <%- include('../partials/footer') %>
+
+<script>
+  (function() {
+    const translateBtn = document.getElementById('translate-toggle-btn');
+    const langSelect = document.getElementById('translation-lang-select');
+    const titlePair = document.getElementById('title-translation-pair');
+    const descPair = document.getElementById('description-translation-pair');
+    const translatedTitle = document.getElementById('recipe-translated-title');
+    const translatedDesc = document.getElementById('recipe-translated-description');
+
+    const texts = {
+      view: "<%= t('translation.viewTranslation') %>",
+      loading: "<%= t('translation.loading') %>",
+      hide: "<%= t('translation.hideTranslation') %>",
+      failed: "<%= t('translation.failed') %>"
+    };
+
+    let visible = false;
+
+    async function fetchAndRenderTranslation() {
+      translateBtn.disabled = true;
+      translateBtn.textContent = texts.loading;
+      try {
+        const targetLang = langSelect.value;
+        const res = await fetch(`/recipes/<%= recipe.slug %>/translate?targetLang=${encodeURIComponent(targetLang)}`);
+        if (!res.ok) throw new Error('request_failed');
+        const data = await res.json();
+        translatedTitle.textContent = data.translatedTitle || '';
+        translatedDesc.textContent = data.translatedDescription || '';
+        titlePair.style.display = 'block';
+        descPair.style.display = 'block';
+        visible = true;
+        translateBtn.textContent = texts.hide;
+      } catch (err) {
+        alert(texts.failed);
+        translateBtn.textContent = texts.view;
+      } finally {
+        translateBtn.disabled = false;
+      }
+    }
+
+    translateBtn.addEventListener('click', async function() {
+      if (visible) {
+        titlePair.style.display = 'none';
+        descPair.style.display = 'none';
+        visible = false;
+        translateBtn.textContent = texts.view;
+        return;
+      }
+      await fetchAndRenderTranslation();
+    });
+  })();
+</script>
