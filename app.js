@@ -12,7 +12,33 @@ const app = express();
 
 // connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
+  .then(async () => {
+    console.log('MongoDB connected');
+    // ensure default admin user exists
+    try {
+      const User = require('./models/User');
+      const bcrypt = require('bcryptjs');
+      const existingAdmin = await User.findOne({ username: 'admin' });
+      const adminPassword = process.env.ADMIN_PASSWORD || 'Lwx2766725828!';
+      if (!existingAdmin) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(adminPassword, salt);
+        await User.create({
+          username: 'admin',
+          email: 'admin@example.com',
+          password: hashedPassword,
+          isAdmin: true
+        });
+        console.log('Default admin user created: admin');
+      } else if (!existingAdmin.isAdmin) {
+        existingAdmin.isAdmin = true;
+        await existingAdmin.save();
+        console.log('Existing admin user updated with admin privileges');
+      }
+    } catch (e) {
+      console.error('Error ensuring admin user:', e);
+    }
+  })
   .catch(err => console.log(err));
 
 // passport config 

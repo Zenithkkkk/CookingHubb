@@ -328,8 +328,8 @@ exports.getEditRecipeForm = async (req, res) => {
       const recipe = await Recipe.findOne({ slug: req.params.slug });
       if (!recipe) return res.status(404).render('404');
         
-      // authorship check
-      if (recipe.author.toString() !== req.user._id.toString()) {
+      // authorship or admin check
+      if (!req.user.isAdmin && recipe.author.toString() !== req.user._id.toString()) {
         return res.redirect('/recipes');
       }
   
@@ -346,7 +346,7 @@ exports.getEditRecipeForm = async (req, res) => {
       const recipe = await Recipe.findOne({ slug: req.params.slug });
       if (!recipe) return res.status(404).render('404');
   
-      if (recipe.author.toString() !== req.user._id.toString()) {
+      if (!req.user.isAdmin && recipe.author.toString() !== req.user._id.toString()) {
         return res.redirect('/recipes');
       }
   
@@ -391,7 +391,7 @@ exports.getEditRecipeForm = async (req, res) => {
       const recipe = await Recipe.findOne({ slug: req.params.slug });
       if (!recipe) return res.status(404).render('404');
   
-      if (recipe.author.toString() !== req.user._id.toString()) {
+      if (!req.user.isAdmin && recipe.author.toString() !== req.user._id.toString()) {
         return res.redirect('/recipes');
       }
   

@@ -44,7 +44,7 @@
 
   <div class="recipe-actions">
   <!-- edit and delete buttons appear iff currently logged in user is recipe's author -->
-  <% if (currentUser && recipe.author._id.toString() === currentUser._id.toString()) { %>
+  <% if (currentUser && (currentUser.isAdmin || recipe.author._id.toString() === currentUser._id.toString())) { %>
     <a href="/recipes/<%= recipe.slug %>/edit" class="btn btn-secondary"><%= t('actions.edit') %></a>
 
     <!-- method override -->
