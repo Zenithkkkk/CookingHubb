@@ -239,6 +239,17 @@ exports.postRegister = async (req, res, next) => {
 
     } catch (err) {
       console.error(err);
+
+      if (err && err.code === 11000) {
+        const field = err.keyPattern ? Object.keys(err.keyPattern)[0] : '';
+        if (field === 'email' || field === 'username' || field === 'phone') {
+          return renderRegister(res, {
+            errorKey: 'auth.emailOrUsernameInUse',
+            ...formData
+          });
+        }
+      }
+
       renderRegister(res, {
         errorKey: 'auth.somethingWentWrong',
         ...formData

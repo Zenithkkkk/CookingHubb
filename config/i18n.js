@@ -187,7 +187,8 @@ const TRANSLATIONS = {
       bio: 'Bio',
       profilePicture: 'Profile Picture',
       current: 'Current: {{file}}',
-      saveChanges: 'Save Changes'
+      saveChanges: 'Save Changes',
+      usernameRequired: 'Username is required'
     },
     liked: {
       empty: 'You have not liked any recipes yet.',
@@ -399,7 +400,8 @@ const TRANSLATIONS = {
       bio: 'Bio',
       profilePicture: 'Profilbild',
       current: 'Aktuell: {{file}}',
-      saveChanges: 'Änderungen speichern'
+      saveChanges: 'Änderungen speichern',
+      usernameRequired: 'Benutzername ist erforderlich'
     },
     liked: {
       empty: 'Du hast noch keine Rezepte geliked.',
@@ -611,7 +613,8 @@ const TRANSLATIONS = {
       bio: 'Biografía',
       profilePicture: 'Foto de perfil',
       current: 'Actual: {{file}}',
-      saveChanges: 'Guardar cambios'
+      saveChanges: 'Guardar cambios',
+      usernameRequired: 'El nombre de usuario es obligatorio'
     },
     liked: {
       empty: 'Aún no has dado me gusta a ninguna receta.',
@@ -823,7 +826,8 @@ const TRANSLATIONS = {
       bio: '简介',
       profilePicture: '头像',
       current: '当前：{{file}}',
-      saveChanges: '保存更改'
+      saveChanges: '保存更改',
+      usernameRequired: '用户名不能为空'
     },
     liked: {
       empty: '你还没有喜欢任何食谱。',

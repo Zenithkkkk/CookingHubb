@@ -9,8 +9,6 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
 
       email: {
         type: String,
-        unique: true,
-        sparse: true,
         lowercase: true,
         trim: true
       },
@@ -27,8 +25,6 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
 
       phone: {
         type: String,
-        unique: true,
-        sparse: true,
         trim: true
       },
 
@@ -64,6 +60,10 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
         default: Date.now
       }
 });
+
+// Only enforce uniqueness when email/phone are actually set (allows multiple phone-only users).
+UserSchema.index({ email: 1 }, { unique: true, sparse: true });
+UserSchema.index({ phone: 1 }, { unique: true, sparse: true });
 
 // compile schema into a user model (mongo creates a collection called users)
 module.exports = mongoose.model('User', UserSchema);

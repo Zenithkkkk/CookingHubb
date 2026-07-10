@@ -3,7 +3,14 @@
 <div class="form-card">
   <h1><%= t('page.profileEdit') %></h1>
 
+  <% if (typeof errorKey !== 'undefined' && errorKey) { %>
+    <p class="error"><%= t(errorKey) %></p>
+  <% } %>
+
   <form action="/profile/edit/me?_method=PUT" method="POST" enctype="multipart/form-data">
+    <label for="username"><%= t('auth.username') %></label>
+    <input type="text" id="username" name="username" value="<%= profileUser.username %>" required>
+
     <label for="bio"><%= t('profile.bio') %></label>
     <textarea id="bio" name="bio" rows="4"><%= profileUser.bio %></textarea>
 

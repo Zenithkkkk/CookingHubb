@@ -28,24 +28,58 @@ exports.getProfile = async (req, res) => {
     }
   };
 
+function renderEditProfile(res, { profileUser, errorKey }) {
+  res.render('profile/edit', { profileUser, errorKey });
+}
+
  // show edit profile form 
 exports.getEditProfile = async (req, res) => {
     try {
         // find user by (logged in) user id 
       const user = await User.findById(req.user._id);
-      res.render('profile/edit', { profileUser: user });
+      renderEditProfile(res, { profileUser: user });
     } catch (err) {
       console.error(err);
       res.redirect('/');
     }
   };
 
-  // lets users update bio and profile picture, searching by ID
+  // lets users update username, bio and profile picture, searching by ID
 exports.updateProfile = async (req, res) => {
+    const { bio, username } = req.body;
+    const trimmedUsername = typeof username === 'string' ? username.trim() : '';
+
     try {
-      const { bio } = req.body;
-  
-      const updateData = { bio };
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.redirect('/');
+      }
+
+      if (!trimmedUsername) {
+        return renderEditProfile(res, {
+          profileUser: { ...user.toObject(), bio },
+          errorKey: 'profile.usernameRequired'
+        });
+      }
+
+      if (trimmedUsername !== user.username) {
+        const existingUser = await User.findOne({
+          username: trimmedUsername,
+          _id: { $ne: user._id }
+        });
+
+        if (existingUser) {
+          return renderEditProfile(res, {
+            profileUser: { ...user.toObject(), username: trimmedUsername, bio },
+            errorKey: 'auth.emailOrUsernameInUse'
+          });
+        }
+      }
+
+      const updateData = {
+        username: trimmedUsername,
+        bio
+      };
         
       // only upload if new one was uploaded
       if (req.body.croppedImage && req.body.croppedImage.startsWith('data:image')) {
@@ -60,9 +94,18 @@ exports.updateProfile = async (req, res) => {
       }
   
       await User.findByIdAndUpdate(req.user._id, updateData);
-      res.redirect(`/profile/${req.user.username}`);
+      res.redirect(`/profile/${trimmedUsername}`);
     } catch (err) {
       console.error(err);
-      res.redirect('/profile/edit');
+
+      if (err && err.code === 11000) {
+        const user = await User.findById(req.user._id);
+        return renderEditProfile(res, {
+          profileUser: { ...user.toObject(), username: trimmedUsername, bio },
+          errorKey: 'auth.emailOrUsernameInUse'
+        });
+      }
+
+      res.redirect('/profile/edit/me');
     }
   };
