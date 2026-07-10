@@ -38,7 +38,7 @@
       <select id="staple" name="staple" title="Matches title first, then description">
         <option value=""><%= t('recipes.allStables') %></option>
         <% stapleOptions.forEach(option => { %>
-          <option value="<%= option %>" <%= searchQuery.staple === option ? 'selected' : '' %>><%= option %></option>
+          <option value="<%= option %>" <%= searchQuery.staple === option ? 'selected' : '' %>><%= t('staples.' + option) || option %></option>
         <% }) %>
       </select>
     </div>

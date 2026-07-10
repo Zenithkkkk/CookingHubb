@@ -15,6 +15,10 @@
   --max-width: 1100px;
 }
 
+@font-face {
+  font-family: 'FZWangXiZhiXingShu';
+  src: url('../fonts/FZWangXiZhiXingShu.ttf') format('truetype');
+}
 
 /* ── RESET & BASE ── */
 *, *::before, *::after {
@@ -78,7 +82,7 @@ nav .nav-brand {
   justify-content: center;
   gap: calc(2.4rem + 10px);
   align-items: center;
-  transform: translateX(-75px);
+  transform: translateX(-35px);
 }
 
 .nav-center-links a {
@@ -124,6 +128,29 @@ nav .nav-brand {
   color: #fff;
   border-color: var(--color-primary-dark);
   outline: none;
+}
+
+.nav-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.95rem;
+  margin-left: calc(0.75rem + 20px);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-contact-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary-dark);
+  text-decoration: none;
 }
 
 .nav-actions {
@@ -595,13 +622,24 @@ select:focus {
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.sharing-section a {
+.sharing-section a,
+.sharing-section button {
   padding: 0.4rem 0.8rem;
   border-radius: var(--radius);
   font-size: 0.9rem;
   color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  line-height: 1.4;
+}
+
+.sharing-section a {
+  display: inline-block;
+  text-decoration: none;
 }
 
 .share-twitter {
@@ -610,6 +648,139 @@ select:focus {
 
 .share-facebook {
   background: #1877f2;
+}
+
+.share-wechat {
+  background: #07c160;
+}
+
+.share-wechat:hover {
+  background: #06ad56;
+}
+
+.wechat-share-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.wechat-share-modal[hidden] {
+  display: none;
+}
+
+.wechat-share-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.wechat-share-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 1.25rem 1.25rem;
+  text-align: center;
+}
+
+.wechat-share-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--color-text-light);
+  cursor: pointer;
+}
+
+.wechat-share-dialog h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+}
+
+.wechat-share-hint {
+  margin: 0 0 1rem;
+  color: var(--color-text-light);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.wechat-share-hint-mobile {
+  display: none;
+}
+
+.wechat-qrcode-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.wechat-qrcode-wrap img {
+  width: 220px;
+  height: 220px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem;
+  background: #fff;
+  object-fit: contain;
+}
+
+.wechat-share-recipe-title {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.wechat-copy-btn {
+  width: 100%;
+  max-width: 240px;
+}
+
+.wechat-copy-feedback {
+  margin: 0.75rem 0 0;
+  color: #1f6b3a;
+  font-size: 0.9rem;
+}
+
+body.wechat-modal-open {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .wechat-share-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .wechat-share-dialog {
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 16px 16px 0 0;
+    padding: 1.25rem 1rem 1.5rem;
+  }
+
+  .wechat-share-hint-desktop {
+    display: none;
+  }
+
+  .wechat-share-hint-mobile {
+    display: block;
+  }
+
+  .wechat-copy-btn {
+    max-width: none;
+  }
 }
 
 
@@ -841,6 +1012,12 @@ footer {
     flex-basis: 100%;
     margin-left: 0;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .nav-contact-btn {
+    margin-left: 0;
   }
 
   .nav-center-emojis {
@@ -894,4 +1071,222 @@ footer {
     gap: 1rem;
     align-items: flex-start;
   }
+
+  .contact-page {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+
+  .contact-info-column {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-qr-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .liked-page-header-main {
+    gap: 1rem;
+  }
+
+  .liked-visibility-form {
+    margin-left: 0;
+  }
+}
+
+/* ── CONTACT PAGE ── */
+.contact-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  align-items: start;
+}
+
+.contact-info-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.contact-info-block {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow);
+}
+
+.contact-lang-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+.contact-info-block h2 {
+  font-size: 1.05rem;
+  margin-bottom: 0.65rem;
+}
+
+.contact-info-block p {
+  font-size: 0.92rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.35rem;
+}
+
+.contact-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-form-card {
+  max-width: none;
+  margin: 0;
+}
+
+.contact-form-card h2 {
+  margin-bottom: 1rem;
+}
+
+.contact-success {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius);
+  background: #eaf8ee;
+  border: 1px solid #b7e0c2;
+  color: #1f6b3a;
+}
+
+.contact-scan-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.contact-qr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.contact-qr-card {
+  text-align: center;
+}
+
+.contact-qr-card img {
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: #fff;
+}
+
+.contact-qr-card figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+}
+
+.contact-scan-captions p {
+  font-size: 0.88rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.35rem;
+  line-height: 1.5;
+}
+
+/* ── LIKED RECIPES VISIBILITY TOGGLE ── */
+.liked-page-header-main {
+  display: flex;
+  align-items: center;
+  gap: 100px;
+  flex-wrap: wrap;
+}
+
+.liked-page-header-main h1 {
+  margin: 0;
+}
+
+.liked-visibility-form {
+  margin: 0 0 0 100px;
+}
+
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  background: #d8c8b8;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--color-primary);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.toggle-label {
+  font-family: "FZWangXiZhiXingShu", "方正王羲之行书", "Kaiti", serif;
+  font-size: 1.05rem;
+  color: var(--color-text-light);
+  max-width: 220px;
+  line-height: 1.4;
+}
+
+.profile-liked-heading {
+  margin-top: 2.5rem;
+}
+
+.profile-liked-message {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
 }

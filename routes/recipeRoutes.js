@@ -8,7 +8,9 @@ const upload = require('../config/multer'); // multer
 // main recipes page (public)
 router.get('/', recipeController.getAllRecipes);
 router.get('/liked', isAuthenticated, recipeController.getLikedRecipes);
+router.post('/liked/visibility', isAuthenticated, recipeController.updateLikedRecipesVisibility);
 router.get('/:slug/translate', recipeController.translateRecipe);
+router.get('/:slug/share-qr', recipeController.getRecipeShareQr);
 
 // create form if user is logged id
 router.get('/new', isAuthenticated, recipeController.getNewRecipeForm);

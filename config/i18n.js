@@ -9,7 +9,8 @@ const TRANSLATIONS = {
       myProfile: 'My Profile',
       login: 'Login',
       register: 'Register',
-      logout: 'Logout'
+      logout: 'Logout',
+      contactUs: 'Contact Us'
     },
     common: {
       search: 'Search',
@@ -99,7 +100,13 @@ const TRANSLATIONS = {
     sharing: {
       shareLabel: 'Share:',
       twitter: 'Twitter',
-      facebook: 'Facebook'
+      facebook: 'Facebook',
+      wechat: 'WeChat',
+      wechatTitle: 'Share to WeChat',
+      wechatHintDesktop: 'Scan this QR code with WeChat on your phone to open the recipe, then forward it to friends or share on Moments.',
+      wechatHintMobile: 'Copy the link below, open WeChat, and paste it into a chat or Moments.',
+      copyLink: 'Copy link',
+      linkCopied: 'Link copied!'
     },
     translation: {
       viewTranslation: 'View Translation',
@@ -133,6 +140,15 @@ const TRANSLATIONS = {
       Drink: 'Drink',
       selectCategory: 'Select a category'
     },
+    staples: {
+      Rice: 'Rice',
+      Noodle: 'Noodle',
+      Pasta: 'Pasta',
+      Bread: 'Bread',
+      Potato: 'Potato',
+      Quinoa: 'Quinoa',
+      Couscous: 'Couscous'
+    },
     form: {
       descriptionInstructions: 'Description / Instructions',
       title: 'Title',
@@ -156,7 +172,10 @@ const TRANSLATIONS = {
       memberSince: 'Member since:',
       noBioYet: 'No bio yet.',
       recipesBy: 'Recipes by {{username}}',
+      likedRecipesBy: 'Liked recipes by {{username}}',
+      likedRecipesHidden: 'This user has hidden this section.',
       noRecipesYet: 'No recipes yet.',
+      noLikedRecipesYet: "This user hasn't saved any recipes yet.",
       bio: 'Bio',
       profilePicture: 'Profile Picture',
       current: 'Current: {{file}}',
@@ -165,10 +184,24 @@ const TRANSLATIONS = {
     liked: {
       empty: 'You have not liked any recipes yet.',
       countOne: 'You liked {{count}} recipe.',
-      countMany: 'You liked {{count}} recipes.'
+      countMany: 'You liked {{count}} recipes.',
+      showOnProfile: 'Visible on my profile to others'
     },
     footer: {
       copy: '&copy; 2026 Recipe Blog'
+    },
+    contact: {
+      formTitle: 'Feedback',
+      nameLabel: 'Name',
+      contactLabel: 'Email / Phone',
+      messageLabel: 'Brief Description',
+      submitButton: 'Submit',
+      successMessage: 'Thank you! Your message has been sent successfully.',
+      nameRequired: 'Please enter your name.',
+      contactRequired: 'Please enter your email or phone number.',
+      messageRequired: 'Please briefly describe your issue.',
+      mailNotConfigured: 'Email service is not configured yet. Please try again later.',
+      sendFailed: 'Failed to send your message. Please try again later.'
     }
   },
   de: {
@@ -181,7 +214,8 @@ const TRANSLATIONS = {
       myProfile: 'Mein Profil',
       login: 'Anmelden',
       register: 'Registrieren',
-      logout: 'Abmelden'
+      logout: 'Abmelden',
+      contactUs: 'Kontakt'
     },
     common: {
       search: 'Suche',
@@ -271,7 +305,13 @@ const TRANSLATIONS = {
     sharing: {
       shareLabel: 'Teilen:',
       twitter: 'Twitter',
-      facebook: 'Facebook'
+      facebook: 'Facebook',
+      wechat: 'WeChat',
+      wechatTitle: 'Über WeChat teilen',
+      wechatHintDesktop: 'Scannen Sie diesen QR-Code mit WeChat auf Ihrem Handy, um das Rezept zu öffnen und an Freunde oder Momente weiterzuleiten.',
+      wechatHintMobile: 'Kopieren Sie den Link unten, öffnen Sie WeChat und fügen Sie ihn in einen Chat oder in Momente ein.',
+      copyLink: 'Link kopieren',
+      linkCopied: 'Link kopiert!'
     },
     translation: {
       viewTranslation: 'Übersetzung anzeigen',
@@ -305,6 +345,15 @@ const TRANSLATIONS = {
       Drink: 'Getränk',
       selectCategory: 'Kategorie auswählen'
     },
+    staples: {
+      Rice: 'Reis',
+      Noodle: 'Nudeln',
+      Pasta: 'Pasta',
+      Bread: 'Brot',
+      Potato: 'Kartoffel',
+      Quinoa: 'Quinoa',
+      Couscous: 'Couscous'
+    },
     form: {
       descriptionInstructions: 'Beschreibung / Anleitung',
       title: 'Titel',
@@ -327,7 +376,10 @@ const TRANSLATIONS = {
       memberSince: 'Mitglied seit:',
       noBioYet: 'Noch kein Bio.',
       recipesBy: 'Rezepte von {{username}}',
+      likedRecipesBy: 'Favorisierte Rezepte von {{username}}',
+      likedRecipesHidden: 'Dieser Benutzer hat diesen Bereich ausgeblendet.',
       noRecipesYet: 'Noch keine Rezepte.',
+      noLikedRecipesYet: 'Dieser Benutzer hat noch keine Rezepte gespeichert.',
       bio: 'Bio',
       profilePicture: 'Profilbild',
       current: 'Aktuell: {{file}}',
@@ -336,10 +388,24 @@ const TRANSLATIONS = {
     liked: {
       empty: 'Du hast noch keine Rezepte geliked.',
       countOne: 'Du magst {{count}} Rezept.',
-      countMany: 'Du magst {{count}} Rezepte.'
+      countMany: 'Du magst {{count}} Rezepte.',
+      showOnProfile: 'Für andere auf meinem Profil sichtbar'
     },
     footer: {
       copy: '&copy; 2026 Recipe Blog'
+    },
+    contact: {
+      formTitle: 'Feedback',
+      nameLabel: 'Name',
+      contactLabel: 'E-Mail / Telefon',
+      messageLabel: 'Kurzbeschreibung',
+      submitButton: 'Absenden',
+      successMessage: 'Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.',
+      nameRequired: 'Bitte geben Sie Ihren Namen ein.',
+      contactRequired: 'Bitte geben Sie Ihre E-Mail oder Telefonnummer ein.',
+      messageRequired: 'Bitte beschreiben Sie Ihr Anliegen kurz.',
+      mailNotConfigured: 'Der E-Mail-Dienst ist noch nicht konfiguriert. Bitte versuchen Sie es später erneut.',
+      sendFailed: 'Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.'
     }
   },
   es: {
@@ -352,7 +418,8 @@ const TRANSLATIONS = {
       myProfile: 'Mi Perfil',
       login: 'Iniciar sesión',
       register: 'Registrarse',
-      logout: 'Cerrar sesión'
+      logout: 'Cerrar sesión',
+      contactUs: 'Contáctanos'
     },
     common: {
       search: 'Buscar',
@@ -442,7 +509,13 @@ const TRANSLATIONS = {
     sharing: {
       shareLabel: 'Compartir:',
       twitter: 'Twitter',
-      facebook: 'Facebook'
+      facebook: 'Facebook',
+      wechat: 'WeChat',
+      wechatTitle: 'Compartir en WeChat',
+      wechatHintDesktop: 'Escanee este código QR con WeChat en su móvil para abrir la receta y compartirla con amigos o en Momentos.',
+      wechatHintMobile: 'Copie el enlace de abajo, abra WeChat y péguelo en un chat o en Momentos.',
+      copyLink: 'Copiar enlace',
+      linkCopied: '¡Enlace copiado!'
     },
     translation: {
       viewTranslation: 'Ver traducción',
@@ -476,6 +549,15 @@ const TRANSLATIONS = {
       Drink: 'Bebida',
       selectCategory: 'Selecciona una categoría'
     },
+    staples: {
+      Rice: 'Arroz',
+      Noodle: 'Fideos',
+      Pasta: 'Pasta',
+      Bread: 'Pan',
+      Potato: 'Patata',
+      Quinoa: 'Quinoa',
+      Couscous: 'Cuscús'
+    },
     form: {
       descriptionInstructions: 'Descripción / Instrucciones',
       title: 'Título',
@@ -498,7 +580,10 @@ const TRANSLATIONS = {
       memberSince: 'Miembro desde:',
       noBioYet: 'Aún no hay biografía.',
       recipesBy: 'Recetas de {{username}}',
+      likedRecipesBy: 'Recetas que le gustan a {{username}}',
+      likedRecipesHidden: 'Este usuario ha ocultado esta sección.',
       noRecipesYet: 'Aún no hay recetas.',
+      noLikedRecipesYet: 'Este usuario no ha guardado ninguna receta.',
       bio: 'Biografía',
       profilePicture: 'Foto de perfil',
       current: 'Actual: {{file}}',
@@ -507,10 +592,24 @@ const TRANSLATIONS = {
     liked: {
       empty: 'Aún no has dado me gusta a ninguna receta.',
       countOne: 'Te gustó {{count}} receta.',
-      countMany: 'Te gustaron {{count}} recetas.'
+      countMany: 'Te gustaron {{count}} recetas.',
+      showOnProfile: 'Visible en mi perfil para otros'
     },
     footer: {
       copy: '&copy; 2026 Recipe Blog'
+    },
+    contact: {
+      formTitle: 'Enviar comentarios',
+      nameLabel: 'Nombre',
+      contactLabel: 'Correo / Teléfono',
+      messageLabel: 'Descripción breve',
+      submitButton: 'Enviar',
+      successMessage: '¡Gracias! Su mensaje se envió correctamente.',
+      nameRequired: 'Por favor ingrese su nombre.',
+      contactRequired: 'Por favor ingrese su correo o teléfono.',
+      messageRequired: 'Por favor describa brevemente su problema.',
+      mailNotConfigured: 'El servicio de correo aún no está configurado. Inténtelo más tarde.',
+      sendFailed: 'No se pudo enviar su mensaje. Inténtelo más tarde.'
     }
   },
   zh: {
@@ -520,10 +619,11 @@ const TRANSLATIONS = {
     nav: {
       recipes: '食谱',
       likedRecipes: '我喜欢的食谱',
-      myProfile: '我的资料',
+      myProfile: '我的主页',
       login: '登录',
       register: '注册',
-      logout: '退出登录'
+      logout: '退出登录',
+      contactUs: '联系我们'
     },
     common: {
       search: '搜索',
@@ -613,7 +713,13 @@ const TRANSLATIONS = {
     sharing: {
       shareLabel: '分享：',
       twitter: 'Twitter',
-      facebook: 'Facebook'
+      facebook: 'Facebook',
+      wechat: '微信',
+      wechatTitle: '微信分享',
+      wechatHintDesktop: '打开手机微信扫一扫，即可在手机上打开该食谱，并转发给好友或分享到朋友圈。',
+      wechatHintMobile: '复制下方链接，打开微信粘贴发送，或分享到朋友圈。',
+      copyLink: '复制链接',
+      linkCopied: '链接已复制！'
     },
     translation: {
       viewTranslation: '查看翻译',
@@ -647,6 +753,15 @@ const TRANSLATIONS = {
       Drink: '饮品',
       selectCategory: '选择餐类'
     },
+    staples: {
+      Rice: '米饭',
+      Noodle: '面条',
+      Pasta: '意面',
+      Bread: '面包',
+      Potato: '土豆',
+      Quinoa: '藜麦',
+      Couscous: '北非小米'
+    },
     form: {
       descriptionInstructions: '描述 / 使用说明',
       title: '标题',
@@ -669,7 +784,10 @@ const TRANSLATIONS = {
       memberSince: '加入时间：',
       noBioYet: '暂无简介。',
       recipesBy: '{{username}}的食谱',
+      likedRecipesBy: '{{username}}喜欢的食谱',
+      likedRecipesHidden: '该用户隐藏了这部分。',
       noRecipesYet: '暂无食谱。',
+      noLikedRecipesYet: '该用户没有收藏任何食谱哦',
       bio: '简介',
       profilePicture: '头像',
       current: '当前：{{file}}',
@@ -678,10 +796,24 @@ const TRANSLATIONS = {
     liked: {
       empty: '你还没有喜欢任何食谱。',
       countOne: '你喜欢 {{count}} 个食谱。',
-      countMany: '你喜欢 {{count}} 个食谱。'
+      countMany: '你喜欢 {{count}} 个食谱。',
+      showOnProfile: '他人可否在我的主页中看到'
     },
     footer: {
       copy: '&copy; 2026 Recipe Blog'
+    },
+    contact: {
+      formTitle: '意见提交',
+      nameLabel: '姓名',
+      contactLabel: '邮箱 / 电话',
+      messageLabel: '问题简述',
+      submitButton: '提交',
+      successMessage: '感谢您的留言，我们已成功收到！',
+      nameRequired: '请填写姓名。',
+      contactRequired: '请填写邮箱或电话。',
+      messageRequired: '请简述您的问题。',
+      mailNotConfigured: '邮件服务尚未配置，请稍后再试。',
+      sendFailed: '发送失败，请稍后再试。'
     }
   }
 };

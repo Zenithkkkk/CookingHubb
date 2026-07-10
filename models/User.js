@@ -54,6 +54,11 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
         default: false
       },
 
+      showLikedRecipesOnProfile: {
+        type: Boolean,
+        default: false
+      },
+
       createdAt: {
         type: Date,
         default: Date.now

@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+
+<div class="contact-page">
+  <div class="contact-info-column">
+    <% infoBlocks.forEach(block => { %>
+      <article class="contact-info-block">
+        <span class="contact-lang-tag"><%= block.langLabel %></span>
+        <h2><%= block.title %></h2>
+        <p><%= block.email %></p>
+        <p><%= block.phone %></p>
+        <p><%= block.line3 %></p>
+        <p><%= block.line4 %></p>
+      </article>
+    <% }) %>
+  </div>
+
+  <div class="contact-side-column">
+    <section class="contact-form-section form-card contact-form-card">
+      <h2><%= t('contact.formTitle') %></h2>
+
+      <% if (success) { %>
+        <p class="contact-success"><%= t('contact.successMessage') %></p>
+      <% } %>
+
+      <% if (errorKey) { %>
+        <p class="error"><%= t(errorKey) %></p>
+      <% } %>
+
+      <form action="/contact" method="POST">
+        <label for="contact-name"><%= t('contact.nameLabel') %></label>
+        <input type="text" id="contact-name" name="name" value="<%= form.name || '' %>" required>
+
+        <label for="contact-info"><%= t('contact.contactLabel') %></label>
+        <input type="text" id="contact-info" name="contact" value="<%= form.contact || '' %>" required>
+
+        <label for="contact-message"><%= t('contact.messageLabel') %></label>
+        <textarea id="contact-message" name="message" rows="5" required><%= form.message || '' %></textarea>
+
+        <button type="submit" class="btn btn-primary"><%= t('contact.submitButton') %></button>
+      </form>
+    </section>
+
+    <section class="contact-scan-section">
+      <div class="contact-qr-grid">
+        <figure class="contact-qr-card">
+          <img src="/images/contact/wechat.png" alt="WeChat QR code">
+          <figcaption>WeChat</figcaption>
+        </figure>
+        <figure class="contact-qr-card">
+          <img src="/images/contact/instagram.png" alt="Instagram QR code">
+          <figcaption>Instagram</figcaption>
+        </figure>
+      </div>
+      <div class="contact-scan-captions">
+        <% scanCaptions.forEach(caption => { %>
+          <p><%= caption %></p>
+        <% }) %>
+      </div>
+    </section>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

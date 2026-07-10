@@ -1,6 +1,5 @@
 const User = require('../models/User'); // profile data
 const Recipe = require('../models/Recipe'); // recipes created by user
-const upload = require('../config/multer');
 
 exports.getProfile = async (req, res) => {
     try {
@@ -9,8 +8,20 @@ exports.getProfile = async (req, res) => {
       if (!user) return res.status(404).render('404');
       // find recipes where author matches user's ID
       const recipes = await Recipe.find({ author: user._id }).sort({ createdAt: -1 });
-      // pass both to profileUser
-      res.render('profile/show', { profileUser: user, recipes });
+
+      const isOwnProfile = req.user && req.user._id.toString() === user._id.toString();
+      const likedRecipes = await Recipe.find({ likes: user._id })
+        .populate('author')
+        .sort({ createdAt: -1 });
+      const likedRecipesHidden = !isOwnProfile && !user.showLikedRecipesOnProfile;
+
+      res.render('profile/show', {
+        profileUser: user,
+        recipes,
+        likedRecipes,
+        isOwnProfile,
+        likedRecipesHidden
+      });
     } catch (err) {
       console.error(err);
       res.redirect('/');

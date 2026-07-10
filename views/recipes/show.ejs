@@ -71,9 +71,32 @@
 <!-- sharing section -->
 <section class="sharing-section">
   <span><%= t('sharing.shareLabel') %></span>
-  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-twitter"><%= t('sharing.twitter') %></a> <!-- encodeURIComponent converts title and URL into format safe to include in another URL -->
-  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/recipes/' + recipe.slug) %>" target="_blank" class="share-facebook"><%= t('sharing.facebook') %></a>
+  <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(recipe.title) %>&url=<%= encodeURIComponent(recipeShareUrl) %>" target="_blank" rel="noopener noreferrer" class="share-twitter"><%= t('sharing.twitter') %></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(recipeShareUrl) %>" target="_blank" rel="noopener noreferrer" class="share-facebook"><%= t('sharing.facebook') %></a>
+  <button type="button" class="share-wechat" id="wechat-share-btn"><%= t('sharing.wechat') %></button>
 </section>
+
+<div id="wechat-share-modal" class="wechat-share-modal" hidden aria-hidden="true">
+  <div class="wechat-share-backdrop" data-wechat-close></div>
+  <div class="wechat-share-dialog" role="dialog" aria-modal="true" aria-labelledby="wechat-share-title">
+    <button type="button" class="wechat-share-close" data-wechat-close aria-label="Close">&times;</button>
+    <h3 id="wechat-share-title"><%= t('sharing.wechatTitle') %></h3>
+    <p class="wechat-share-hint wechat-share-hint-desktop"><%= t('sharing.wechatHintDesktop') %></p>
+    <p class="wechat-share-hint wechat-share-hint-mobile"><%= t('sharing.wechatHintMobile') %></p>
+    <div class="wechat-qrcode-wrap">
+      <img
+        id="wechat-qrcode"
+        src="/recipes/<%= recipe.slug %>/share-qr"
+        alt="<%= t('sharing.wechatTitle') %>"
+        width="220"
+        height="220"
+      >
+    </div>
+    <p class="wechat-share-recipe-title"><%= recipe.title %></p>
+    <button type="button" class="btn btn-secondary wechat-copy-btn" id="wechat-copy-link"><%= t('sharing.copyLink') %></button>
+    <p class="wechat-copy-feedback" id="wechat-copy-feedback" hidden><%= t('sharing.linkCopied') %></p>
+  </div>
+</div>
 
 <!-- comments section -->
 <section class="comments-section">
@@ -147,7 +170,7 @@
           <p class="translation-label"><%= t('translation.translatedComment') %></p>
           <p class="translation-content"></p>
         </div>
-        <% if (currentUser && comment.author._id.toString() === currentUser._id.toString()) { %>
+        <% if (currentUser && (currentUser.isAdmin || comment.author._id.toString() === currentUser._id.toString())) { %>
           <form action="/recipes/<%= recipe.slug %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
             <button type="submit" class="btn btn-danger" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.7rem;"><%= t('actions.delete') %></button>
           </form>
@@ -245,5 +268,62 @@
         }
       });
     });
+
+    const shareUrl = <%- JSON.stringify(recipeShareUrl) %>;
+    const wechatModal = document.getElementById('wechat-share-modal');
+    const wechatBtn = document.getElementById('wechat-share-btn');
+    const wechatQrImg = document.getElementById('wechat-qrcode');
+    const copyBtn = document.getElementById('wechat-copy-link');
+    const copyFeedback = document.getElementById('wechat-copy-feedback');
+
+    function openWechatModal() {
+      if (!wechatModal) return;
+      wechatModal.hidden = false;
+      wechatModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('wechat-modal-open');
+
+      if (wechatQrImg) {
+        wechatQrImg.src = '/recipes/<%= recipe.slug %>/share-qr?t=' + Date.now();
+      }
+    }
+
+    function closeWechatModal() {
+      if (!wechatModal) return;
+      wechatModal.hidden = true;
+      wechatModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('wechat-modal-open');
+      if (copyFeedback) copyFeedback.hidden = true;
+    }
+
+    if (wechatBtn) {
+      wechatBtn.addEventListener('click', openWechatModal);
+    }
+
+    if (wechatModal) {
+      wechatModal.querySelectorAll('[data-wechat-close]').forEach(function(el) {
+        el.addEventListener('click', closeWechatModal);
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !wechatModal.hidden) closeWechatModal();
+    });
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async function() {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          copyFeedback.hidden = false;
+        } catch (err) {
+          const input = document.createElement('input');
+          input.value = shareUrl;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          copyFeedback.hidden = false;
+        }
+      });
+    }
   })();
 </script>

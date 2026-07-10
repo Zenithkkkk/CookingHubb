@@ -91,8 +91,8 @@ exports.createComment = async (req, res) => {
         const comment = await Comment.findById(req.params.commentId).populate('recipe');
       if (!comment) return res.status(404).render('404');
         
-      // verify ownership
-      if (comment.author.toString() !== req.user._id.toString()) {
+      // verify ownership or admin
+      if (!req.user.isAdmin && comment.author.toString() !== req.user._id.toString()) {
         return res.redirect(`/recipes/${comment.recipe.slug}`);
       }
 

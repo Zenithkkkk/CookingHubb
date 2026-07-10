@@ -1,8 +1,14 @@
 // recipe model
 const Recipe = require('../models/Recipe');
 const Comment = require('../models/Comment');
+const User = require('../models/User');
+const QRCode = require('qrcode');
+const {
+  STAPLE_OPTIONS,
+  buildStapleFilterCondition,
+  stapleMatchesTitle
+} = require('../config/stapleSearch');
 
-const STAPLE_OPTIONS = ['Rice', 'Noodle', 'Pasta', 'Bread', 'Potato', 'Quinoa', 'Couscous'];
 const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Drink'];
 const TRANSLATABLE_LANGUAGES = new Set(['en', 'de', 'es', 'zh']);
 const TRANSLATION_CACHE_TTL_MS = 1000 * 60 * 60 * 12;
@@ -177,13 +183,7 @@ exports.getAllRecipes = async (req, res) => {
       }
 
       if (staple && staple.trim()) {
-        const stapleRegex = new RegExp(escapeRegex(staple.trim()), 'i');
-        conditions.push({
-          $or: [
-            { title: stapleRegex },
-            { description: stapleRegex }
-          ]
-        });
+        conditions.push(buildStapleFilterCondition(staple));
       }
 
       if (category && category.trim()) {
@@ -200,10 +200,9 @@ exports.getAllRecipes = async (req, res) => {
       let recipes = await Recipe.find(filter).populate('author').sort({ createdAt: -1 });
 
       if (staple && staple.trim()) {
-        const stapleRegex = new RegExp(escapeRegex(staple.trim()), 'i');
         recipes.sort((a, b) => {
-          const aTitleMatch = stapleRegex.test(a.title);
-          const bTitleMatch = stapleRegex.test(b.title);
+          const aTitleMatch = stapleMatchesTitle(a, staple);
+          const bTitleMatch = stapleMatchesTitle(b, staple);
           if (aTitleMatch !== bTitleMatch) return aTitleMatch ? -1 : 1;
           return b.createdAt - a.createdAt;
         });
@@ -236,10 +235,59 @@ exports.getLikedRecipes = async (req, res) => {
       .populate('author')
       .sort({ createdAt: -1 });
 
-    res.render('recipes/liked', { recipes });
+    res.render('recipes/liked', {
+      recipes,
+      showLikedRecipesOnProfile: !!req.user.showLikedRecipesOnProfile
+    });
   } catch (err) {
     console.error(err);
     res.redirect('/recipes');
+  }
+};
+
+exports.updateLikedRecipesVisibility = async (req, res) => {
+  try {
+    const showOnProfile = req.body.showOnProfile === 'true';
+    await User.findByIdAndUpdate(req.user._id, {
+      showLikedRecipesOnProfile: showOnProfile
+    });
+    req.user.showLikedRecipesOnProfile = showOnProfile;
+    res.redirect('/recipes/liked');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/recipes/liked');
+  }
+};
+
+function buildRecipeShareUrl(req, slug) {
+  const baseUrl = (process.env.APP_BASE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  return `${baseUrl}/recipes/${slug}`;
+}
+
+exports.getRecipeShareQr = async (req, res) => {
+  try {
+    const recipe = await Recipe.findOne({ slug: req.params.slug }).select('slug');
+    if (!recipe) {
+      return res.status(404).end();
+    }
+
+    const shareUrl = buildRecipeShareUrl(req, recipe.slug);
+    const pngBuffer = await QRCode.toBuffer(shareUrl, {
+      type: 'png',
+      width: 280,
+      margin: 2,
+      color: {
+        dark: '#1a1a1a',
+        light: '#ffffff'
+      }
+    });
+
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(pngBuffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).end();
   }
 };
 
@@ -260,11 +308,14 @@ exports.getRecipeBySlug = async (req, res) => {
         ? (ratedComments.reduce((sum, comment) => sum + comment.rating, 0) / ratedComments.length)
         : null;
 
+      const recipeShareUrl = buildRecipeShareUrl(req, recipe.slug);
+
       res.render('recipes/show', {
         recipe,
         comments,
         averageRating,
-        reviewCount: ratedComments.length
+        reviewCount: ratedComments.length,
+        recipeShareUrl
       });
     } catch (err) {
       console.error(err);

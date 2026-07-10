@@ -32,4 +32,25 @@
   </div>
 <% } %>
 
+<h2 class="profile-liked-heading"><%= t('profile.likedRecipesBy', { username: profileUser.username }) %></h2>
+
+<% if (likedRecipesHidden) { %>
+  <p class="profile-liked-message"><%= t('profile.likedRecipesHidden') %></p>
+<% } else if (likedRecipes.length === 0) { %>
+  <p class="profile-liked-message"><%= t('profile.noLikedRecipesYet') %></p>
+<% } else { %>
+  <div class="recipe-grid">
+    <% likedRecipes.forEach(recipe => { %>
+      <article class="recipe-card">
+        <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
+        <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+        <div class="recipe-card-body">
+          <h3><%= recipe.title %></h3>
+          <p><%= t('recipes.categoryLabel') %> <%= recipe.category %></p>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+
 <%- include('../partials/footer') %>

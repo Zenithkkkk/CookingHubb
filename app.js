@@ -83,6 +83,7 @@ app.use('/', require('./routes/authRoutes')); //any route defined here is mounte
 app.use('/', require('./routes/languageRoutes'));
 app.use('/recipes', require('./routes/recipeRoutes')); // mount routes under /recipe
 app.use('/profile', require('./routes/profileRoutes'));
+app.use('/', require('./routes/contactRoutes'));
 
 const PORT = process.env.PORT || 3000; // start server from PORT from .env, otherwise 3000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
