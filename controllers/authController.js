@@ -272,7 +272,9 @@ exports.postRegister = async (req, res, next) => {
       if (!user) {
         let errorKey = 'auth.loginFailed';
         const message = info && info.message ? info.message : '';
-        if (message === 'No account found with that email or phone') {
+        if (message === 'No account found with that email, phone or username') {
+          errorKey = 'auth.noAccountFound';
+        } else if (message === 'No account found with that email or phone') {
           errorKey = 'auth.noAccountFound';
         } else if (message === 'Incorrect password') {
           errorKey = 'auth.incorrectPassword';

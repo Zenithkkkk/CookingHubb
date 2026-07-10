@@ -13,11 +13,12 @@ module.exports = function(passport) {
             const user = await User.findOne({
               $or: [
                 { email: normalizedCredential.toLowerCase() },
+                { username: normalizedCredential },
                 ...(normalizedPhone ? [{ phone: normalizedPhone }] : [])
               ]
             });
             if (!user) {
-              return done(null, false, { message: 'No account found with that email or phone' });
+              return done(null, false, { message: 'No account found with that email, phone or username' });
             }
 
             const isMatch = await bcrypt.compare(password, user.password); // bycript.compare checks passwords match

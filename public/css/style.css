@@ -301,6 +301,13 @@ select:focus {
   font-size: 0.92rem;
 }
 
+.login-top-hint {
+  margin: 0.35rem 0 1rem;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
 .phone-register-row {
   display: grid;
   grid-template-columns: minmax(160px, 220px) 1fr;

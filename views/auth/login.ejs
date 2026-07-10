@@ -3,6 +3,7 @@
 
 <div class="form-card">
   <h1><%= t('auth.welcomeBack') %></h1>
+  <p class="login-top-hint"><%= t('auth.loginMethodHint') %></p>
 
   <!-- show login error message if provided -->
   <% if (typeof errorKey !== 'undefined' && errorKey) { %>
