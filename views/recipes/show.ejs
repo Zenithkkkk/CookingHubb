@@ -2,7 +2,9 @@
 <%- include('../partials/header') %>
 
 <article class="recipe-detail">
-  <img class="recipe-detail-image" src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+  <div class="recipe-detail-image-wrap">
+    <img class="recipe-detail-image" src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+  </div>
 
   <div class="recipe-title-translate-row">
     <h1 id="recipe-original-title"><%= recipe.title %></h1>
@@ -23,12 +25,12 @@
   </div>
   
   <div class="recipe-meta">
-    <span>📁 <%= recipe.category %></span>
+    <span>📁 <%= t('categories.' + recipe.category) || recipe.category %></span>
     <span>👤 <a href="/profile/<%= recipe.author.username %>"><%= recipe.author.username %></a></span>
     <span>📅 <%= recipe.createdAt.toDateString() %></span>
     <% if (recipe.tags.length > 0) { %>
       <% recipe.tags.forEach(tag => { %>
-        <span class="recipe-tag">#<%= tag %></span>
+        <a href="/recipes?tag=<%= encodeURIComponent(tag) %>" class="recipe-tag">#<%= tag %></a>
       <% }) %>
     <% } %>
   </div>
@@ -58,15 +60,30 @@
 <!-- likes section -->
 <section class="likes-section">
   <% if (currentUser) { %>
+    <% const alreadyLiked = recipe.likes.some(id => id.toString() === currentUser._id.toString()) %>
     <form action="/recipes/<%= recipe.slug %>/like" method="POST">
-      <% const alreadyLiked = recipe.likes.some(id => id.toString() === currentUser._id.toString()) %> <!-- check if authenticated user already likes this recipe-->
-      <button type="submit">
+      <button type="submit" class="like-action-btn">
         <%= alreadyLiked ? '❤️ ' + t('like.unlike') : '🤍 ' + t('like.like') %>
       </button>
     </form>
+  <% } else { %>
+    <button type="button" class="like-action-btn" id="guest-like-btn">🤍 <%= t('like.like') %></button>
   <% } %>
   <p><%= recipe.likes.length %> <%= recipe.likes.length === 1 ? t('like.one') : t('like.many') %></p>
 </section>
+
+<div id="like-login-modal" class="wechat-share-modal auth-prompt-modal" hidden aria-hidden="true">
+  <div class="wechat-share-backdrop" data-like-login-close></div>
+  <div class="wechat-share-dialog" role="dialog" aria-modal="true" aria-labelledby="like-login-message">
+    <button type="button" class="wechat-share-close" data-like-login-close aria-label="Close">&times;</button>
+    <p id="like-login-message" class="auth-prompt-message"><%= t('like.loginPrompt') %></p>
+    <p class="auth-prompt-links">
+      <a href="/login"><%= t('nav.login') %></a>
+      <span class="auth-prompt-separator">/</span>
+      <a href="/register"><%= t('nav.register') %></a>
+    </p>
+  </div>
+</div>
 
 <!-- sharing section -->
 <section class="sharing-section">
@@ -325,5 +342,38 @@
         }
       });
     }
+
+    const likeLoginModal = document.getElementById('like-login-modal');
+    const guestLikeBtn = document.getElementById('guest-like-btn');
+
+    function openLikeLoginModal() {
+      if (!likeLoginModal) return;
+      likeLoginModal.hidden = false;
+      likeLoginModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('wechat-modal-open');
+    }
+
+    function closeLikeLoginModal() {
+      if (!likeLoginModal) return;
+      likeLoginModal.hidden = true;
+      likeLoginModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('wechat-modal-open');
+    }
+
+    if (guestLikeBtn) {
+      guestLikeBtn.addEventListener('click', openLikeLoginModal);
+    }
+
+    if (likeLoginModal) {
+      likeLoginModal.querySelectorAll('[data-like-login-close]').forEach(function(el) {
+        el.addEventListener('click', closeLikeLoginModal);
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && likeLoginModal && !likeLoginModal.hidden) {
+        closeLikeLoginModal();
+      }
+    });
   })();
 </script>

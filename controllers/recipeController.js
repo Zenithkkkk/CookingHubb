@@ -8,6 +8,8 @@ const {
   buildStapleFilterCondition,
   stapleMatchesTitle
 } = require('../config/stapleSearch');
+const { buildTagFilterConditionAsync, buildTagsSearchTerms } = require('../config/tagSearch');
+const { translateText } = require('../config/translate');
 
 const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Drink'];
 const TRANSLATABLE_LANGUAGES = new Set(['en', 'de', 'es', 'zh']);
@@ -31,57 +33,6 @@ function stripHtml(value) {
   return String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-async function translateText(text, targetLang) {
-  const azureKey = process.env.AZURE_TRANSLATOR_KEY;
-  if (azureKey) {
-    const endpoint = process.env.AZURE_TRANSLATOR_ENDPOINT || 'https://api.cognitive.microsofttranslator.com';
-    const region = process.env.AZURE_TRANSLATOR_REGION;
-    const azureTarget = targetLang === 'zh' ? 'zh-Hans' : targetLang;
-    const translateUrl = `${endpoint.replace(/\/$/, '')}/translate?api-version=3.0&to=${encodeURIComponent(azureTarget)}`;
-    const headers = {
-      'Content-Type': 'application/json',
-      'Ocp-Apim-Subscription-Key': azureKey
-    };
-    if (region) {
-      headers['Ocp-Apim-Subscription-Region'] = region;
-    }
-
-    const response = await fetch(translateUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify([{ text }])
-    });
-
-    if (!response.ok) {
-      throw new Error(`Azure translation API failed with status ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data?.[0]?.translations?.[0]?.text || '';
-  }
-
-  const endpoint = process.env.LIBRETRANSLATE_URL || 'https://libretranslate.com/translate';
-  const apiKey = process.env.LIBRETRANSLATE_API_KEY;
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      q: text,
-      source: 'auto',
-      target: targetLang,
-      format: 'text',
-      ...(apiKey ? { api_key: apiKey } : {})
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Translation API failed with status ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.translatedText || '';
-}
-
 function getCachedTranslation(cacheKey) {
   const cached = translationCache.get(cacheKey);
   if (!cached) return null;
@@ -99,29 +50,47 @@ function setCachedTranslation(cacheKey, value) {
   });
 }
 
-async function resolveRecipeImage({ croppedImage, file, externalImageUrl }) {
+async function uploadToCloudinary(source, folder = 'recipe-blog/recipes') {
+  const cloudinary = require('cloudinary').v2;
+  const result = await cloudinary.uploader.upload(source, { folder });
+  return result.secure_url;
+}
+
+async function resolveRecipeImage({ croppedImage, originalImage, file, externalImageUrl }) {
   const trimmedImageUrl = externalImageUrl ? externalImageUrl.trim() : '';
+  const trimmedOriginal = originalImage ? originalImage.trim() : '';
 
   if (croppedImage && croppedImage.startsWith('data:image')) {
-    const cloudinary = require('cloudinary').v2;
-    const result = await cloudinary.uploader.upload(croppedImage, {
-      folder: 'recipe-blog/recipes'
-    });
-    return { imageUrl: result.secure_url };
+    const imageThumbUrl = await uploadToCloudinary(croppedImage);
+    let imageUrl = null;
+
+    if (trimmedOriginal.startsWith('http://') || trimmedOriginal.startsWith('https://')) {
+      imageUrl = trimmedOriginal;
+    } else if (trimmedOriginal.startsWith('data:image')) {
+      imageUrl = await uploadToCloudinary(trimmedOriginal);
+    } else if (file) {
+      imageUrl = file.path;
+    } else if (trimmedImageUrl && isValidHttpUrl(trimmedImageUrl)) {
+      imageUrl = trimmedImageUrl;
+    } else {
+      imageUrl = imageThumbUrl;
+    }
+
+    return { imageUrl, imageThumbUrl };
   }
 
   if (file) {
-    return { imageUrl: file.path };
+    return { imageUrl: file.path, imageThumbUrl: file.path };
   }
 
   if (trimmedImageUrl) {
     if (!isValidHttpUrl(trimmedImageUrl)) {
       return { error: 'Image link must start with http:// or https://.' };
     }
-    return { imageUrl: trimmedImageUrl };
+    return { imageUrl: trimmedImageUrl, imageThumbUrl: trimmedImageUrl };
   }
 
-  return { imageUrl: null };
+  return { imageUrl: null, imageThumbUrl: null };
 }
 
 // create recipe form
@@ -132,10 +101,11 @@ exports.getNewRecipeForm = (req, res) => {
 // pull text fields out of the submitted form data
 exports.createRecipe = async (req, res) => {
   try {
-    const { title, description, category, tags, croppedImage, imageUrl: externalImageUrl } = req.body;
+    const { title, description, category, tags, croppedImage, originalImage, imageUrl: externalImageUrl } = req.body;
     const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
     const imageResult = await resolveRecipeImage({
       croppedImage,
+      originalImage,
       file: req.file,
       externalImageUrl
     });
@@ -148,13 +118,17 @@ exports.createRecipe = async (req, res) => {
       });
     }
 
+    const tagsSearchTerms = await buildTagsSearchTerms(tagsArray);
+
     const recipe = new Recipe({
       title,
       description,
       category,
       tags: tagsArray,
+      tagsSearchTerms,
       author: req.user._id,
-      image: imageResult.imageUrl || 'default-recipe.png'
+      image: imageResult.imageUrl || 'default-recipe.png',
+      imageThumb: imageResult.imageThumbUrl || imageResult.imageUrl || 'default-recipe.png'
     });
 
     await recipe.save();
@@ -165,6 +139,25 @@ exports.createRecipe = async (req, res) => {
   }
 };
    
+
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const recipes = await Recipe.find()
+      .populate('author')
+      .sort({ createdAt: -1 });
+
+    recipes.sort((a, b) => {
+      const likeDiff = (b.likes?.length || 0) - (a.likes?.length || 0);
+      if (likeDiff !== 0) return likeDiff;
+      return b.createdAt - a.createdAt;
+    });
+
+    res.render('recipes/leaderboard', { recipes });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/recipes');
+  }
+};
 
 exports.getAllRecipes = async (req, res) => {
     try {
@@ -191,9 +184,8 @@ exports.getAllRecipes = async (req, res) => {
       }
 
       if (tag && tag.trim()) {
-        conditions.push({
-          tags: { $regex: escapeRegex(tag.trim()), $options: 'i' }
-        });
+        const tagCondition = await buildTagFilterConditionAsync(tag);
+        if (tagCondition) conditions.push(tagCondition);
       }
 
       const filter = conditions.length ? { $and: conditions } : {};
@@ -401,10 +393,11 @@ exports.getEditRecipeForm = async (req, res) => {
         return res.redirect('/recipes');
       }
   
-      const { title, description, category, tags, croppedImage, imageUrl: externalImageUrl } = req.body;
+      const { title, description, category, tags, croppedImage, originalImage, imageUrl: externalImageUrl } = req.body;
       const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
       const imageResult = await resolveRecipeImage({
         croppedImage,
+        originalImage,
         file: req.file,
         externalImageUrl
       });
@@ -422,10 +415,14 @@ exports.getEditRecipeForm = async (req, res) => {
       recipe.description = description;
       recipe.category = category;
       recipe.tags = tagsArray;
+      recipe.tagsSearchTerms = await buildTagsSearchTerms(tagsArray);
       recipe.updatedAt = Date.now();
 
       if (imageResult.imageUrl) {
         recipe.image = imageResult.imageUrl;
+      }
+      if (imageResult.imageThumbUrl) {
+        recipe.imageThumb = imageResult.imageThumbUrl;
       }
   
       await recipe.save();

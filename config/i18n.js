@@ -10,7 +10,8 @@ const TRANSLATIONS = {
       login: 'Login',
       register: 'Register',
       logout: 'Logout',
-      contactUs: 'Contact Us'
+      contactUs: 'Contact Us',
+      leaderboard: 'Leaderboard'
     },
     common: {
       search: 'Search',
@@ -76,13 +77,20 @@ const TRANSLATIONS = {
       addNewRecipe: 'Add New Recipe',
       profileEdit: 'Edit Profile',
       notFoundTitle: '404 - Page Not Found',
-      notFoundMessage: "The recipe you're looking for doesn't exist."
+      notFoundMessage: "The recipe you're looking for doesn't exist.",
+      leaderboard: 'Leaderboard'
+    },
+    leaderboard: {
+      subtitle: 'This ranking is sorted by recipe likes from highest to lowest.',
+      empty: 'No recipes on the leaderboard yet.'
     },
     like: {
       like: 'Like',
       unlike: 'Unlike',
       one: 'like',
-      many: 'likes'
+      many: 'likes',
+      loginPromptTitle: 'Like this recipe',
+      loginPrompt: "You're not logged in yet. Please log in to leave your like!"
     },
     review: {
       one: 'review',
@@ -215,7 +223,8 @@ const TRANSLATIONS = {
       login: 'Anmelden',
       register: 'Registrieren',
       logout: 'Abmelden',
-      contactUs: 'Kontakt'
+      contactUs: 'Kontakt',
+      leaderboard: 'Rangliste'
     },
     common: {
       search: 'Suche',
@@ -281,13 +290,20 @@ const TRANSLATIONS = {
       addNewRecipe: 'Neues Rezept hinzufügen',
       profileEdit: 'Profil bearbeiten',
       notFoundTitle: '404 - Seite nicht gefunden',
-      notFoundMessage: 'Das gesuchte Rezept existiert nicht.'
+      notFoundMessage: 'Das gesuchte Rezept existiert nicht.',
+      leaderboard: 'Rangliste'
+    },
+    leaderboard: {
+      subtitle: 'Diese Rangliste ist nach der Anzahl der Likes sortiert (höchste zuerst).',
+      empty: 'Noch keine Rezepte in der Rangliste.'
     },
     like: {
       like: 'Gefällt mir',
       unlike: 'Nicht mehr',
       one: 'Like',
-      many: 'Likes'
+      many: 'Likes',
+      loginPromptTitle: 'Rezept liken',
+      loginPrompt: 'Du bist noch nicht angemeldet. Bitte melde dich an, um dein Like zu hinterlassen!'
     },
     review: {
       one: 'Bewertung',
@@ -419,7 +435,8 @@ const TRANSLATIONS = {
       login: 'Iniciar sesión',
       register: 'Registrarse',
       logout: 'Cerrar sesión',
-      contactUs: 'Contáctanos'
+      contactUs: 'Contáctanos',
+      leaderboard: 'Ranking'
     },
     common: {
       search: 'Buscar',
@@ -485,13 +502,20 @@ const TRANSLATIONS = {
       addNewRecipe: 'Agregar nueva receta',
       profileEdit: 'Editar perfil',
       notFoundTitle: '404 - Página no encontrada',
-      notFoundMessage: 'La receta que buscas no existe.'
+      notFoundMessage: 'La receta que buscas no existe.',
+      leaderboard: 'Ranking'
+    },
+    leaderboard: {
+      subtitle: 'Este ranking se ordena por cantidad de me gusta, de mayor a menor.',
+      empty: 'Aún no hay recetas en el ranking.'
     },
     like: {
       like: 'Me gusta',
       unlike: 'Quitar me gusta',
       one: 'me gusta',
-      many: 'me gusta'
+      many: 'me gusta',
+      loginPromptTitle: 'Me gusta esta receta',
+      loginPrompt: 'Aún no has iniciado sesión. ¡Inicia sesión para dejar tu me gusta!'
     },
     review: {
       one: 'reseña',
@@ -623,7 +647,8 @@ const TRANSLATIONS = {
       login: '登录',
       register: '注册',
       logout: '退出登录',
-      contactUs: '联系我们'
+      contactUs: '联系我们',
+      leaderboard: '排行榜'
     },
     common: {
       search: '搜索',
@@ -689,13 +714,20 @@ const TRANSLATIONS = {
       addNewRecipe: '添加新食谱',
       profileEdit: '编辑资料',
       notFoundTitle: '404 - 页面未找到',
-      notFoundMessage: '你找的食谱不存在。'
+      notFoundMessage: '你找的食谱不存在。',
+      leaderboard: '排行榜'
+    },
+    leaderboard: {
+      subtitle: '此排行榜根据食谱的喜欢数量由高到低排行',
+      empty: '暂无食谱上榜。'
     },
     like: {
       like: '喜欢',
       unlike: '取消喜欢',
       one: '喜欢',
-      many: '喜欢'
+      many: '喜欢',
+      loginPromptTitle: '喜欢食谱',
+      loginPrompt: '还未登录，请登录后留下你的喜欢吧！'
     },
     review: {
       one: '评价',

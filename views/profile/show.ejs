@@ -22,10 +22,10 @@
     <% recipes.forEach(recipe => { %>
       <article class="recipe-card">
         <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
-        <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+        <img src="<%= ((recipe.imageThumb || recipe.image).startsWith('http') || (recipe.imageThumb || recipe.image).startsWith('/')) ? (recipe.imageThumb || recipe.image) : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
         <div class="recipe-card-body">
           <h3><%= recipe.title %></h3>
-          <p><%= t('recipes.categoryLabel') %> <%= recipe.category %></p>
+          <p><%= t('recipes.categoryLabel') %> <%= t('categories.' + recipe.category) || recipe.category %></p>
         </div>
       </article>
     <% }) %>
@@ -43,10 +43,10 @@
     <% likedRecipes.forEach(recipe => { %>
       <article class="recipe-card">
         <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
-        <img src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+        <img src="<%= ((recipe.imageThumb || recipe.image).startsWith('http') || (recipe.imageThumb || recipe.image).startsWith('/')) ? (recipe.imageThumb || recipe.image) : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
         <div class="recipe-card-body">
           <h3><%= recipe.title %></h3>
-          <p><%= t('recipes.categoryLabel') %> <%= recipe.category %></p>
+          <p><%= t('recipes.categoryLabel') %> <%= t('categories.' + recipe.category) || recipe.category %></p>
         </div>
       </article>
     <% }) %>

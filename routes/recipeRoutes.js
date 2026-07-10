@@ -7,6 +7,7 @@ const upload = require('../config/multer'); // multer
 
 // main recipes page (public)
 router.get('/', recipeController.getAllRecipes);
+router.get('/leaderboard', recipeController.getLeaderboard);
 router.get('/liked', isAuthenticated, recipeController.getLikedRecipes);
 router.post('/liked/visibility', isAuthenticated, recipeController.updateLikedRecipesVisibility);
 router.get('/:slug/translate', recipeController.translateRecipe);

@@ -44,6 +44,7 @@
   </div>
 </div>
 <input type="hidden" id="cropped-image-data" name="croppedImage">
+<input type="hidden" id="original-image-data" name="originalImage">
 <div id="crop-result" class="crop-result"></div>
 
 <% if (typeof currentImage !== 'undefined' && currentImage) { %>
@@ -81,6 +82,7 @@
 
     const reader = new FileReader();
     reader.onload = function(e) {
+      document.getElementById('original-image-data').value = e.target.result;
       const container = document.getElementById('cropper-container');
       const preview = document.getElementById('crop-preview');
       container.style.display = 'block';
@@ -102,6 +104,7 @@
 
     if (!useImageUrl || !url) return;
 
+    document.getElementById('original-image-data').value = url;
     const preview = document.getElementById('crop-preview');
     const container = document.getElementById('cropper-container');
     const image = new Image();
@@ -143,6 +146,7 @@
     document.getElementById('cropper-container').style.display = 'none';
     document.getElementById('crop-result').innerHTML = '';
     document.getElementById('cropped-image-data').value = '';
+    document.getElementById('original-image-data').value = '';
     const fileInput = document.getElementById('image');
     if (fileInput) fileInput.value = '';
   }
