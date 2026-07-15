@@ -14,8 +14,8 @@
     <a href="/" class="nav-brand">🍳 Smart CookingHub</a>
     <div class="nav-center-links">
       <a href="/recipes/leaderboard"><%= t('nav.leaderboard') %></a>
-      <a href="/recipes"><%= t('nav.recipes') %></a>
       <a href="/fridge"><%= t('nav.myFridge') %></a>
+      <a href="/recipes"><%= t('nav.recipes') %></a>
       <% if (currentUser) { %>
         <a href="/recipes/liked"><%= t('nav.likedRecipes') %></a>
         <a href="/profile/<%= currentUser.username %>"><%= t('nav.myProfile') %></a>
