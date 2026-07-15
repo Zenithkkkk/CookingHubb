@@ -6,6 +6,7 @@ const {
   getIgnoreList,
   groupMatchedRecipes
 } = require('../config/fridgeMatch');
+const { expandIngredientsForMatching } = require('../config/ingredientMatchExpand');
 
 const INVALID_IGNORE_TEXT = 'fridge.ignorePlaceholder';
 const LEGACY_DEFAULT_IGNORE_TEXTS = new Set([
@@ -123,11 +124,13 @@ exports.matchRecipes = async (req, res) => {
     await saveFridgeData(req, { ingredients, ignoreText });
 
     const ignoreList = getIgnoreList(ignoreText);
+    const expandedFridgeList = await expandIngredientsForMatching(ingredients);
+    const expandedIgnoreList = await expandIngredientsForMatching(ignoreList);
     const recipes = await Recipe.find({ ingredients: { $exists: true, $ne: [] } })
       .populate('author')
       .sort({ createdAt: -1 });
 
-    const matchResults = groupMatchedRecipes(recipes, ingredients, ignoreList);
+    const matchResults = groupMatchedRecipes(recipes, expandedFridgeList, expandedIgnoreList);
 
     res.render('fridge/index', {
       fridgeIngredients: ingredients,

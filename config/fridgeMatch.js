@@ -1,4 +1,5 @@
 const DEFAULT_IGNORE = ['油', '盐', '糖', '生抽', '醋'];
+const { ingredientMatches } = require('./ingredientBilingual');
 
 function normalize(value) {
   return String(value || '').trim().toLowerCase();
@@ -33,30 +34,14 @@ function isIgnored(ingredient, ignoreList) {
   const normalized = normalize(ingredient);
   if (!normalized) return true;
 
-  return ignoreList.some((ignoreItem) => {
-    const ignoreNormalized = normalize(ignoreItem);
-    if (!ignoreNormalized) return false;
-    return (
-      normalized === ignoreNormalized ||
-      normalized.includes(ignoreNormalized) ||
-      ignoreNormalized.includes(normalized)
-    );
-  });
+  return ignoreList.some((ignoreItem) => ingredientMatches(ingredient, ignoreItem));
 }
 
 function fridgeHasIngredient(recipeIngredient, fridgeList) {
   const recipeNormalized = normalize(recipeIngredient);
   if (!recipeNormalized) return false;
 
-  return fridgeList.some((fridgeItem) => {
-    const fridgeNormalized = normalize(fridgeItem);
-    if (!fridgeNormalized) return false;
-    return (
-      recipeNormalized === fridgeNormalized ||
-      recipeNormalized.includes(fridgeNormalized) ||
-      fridgeNormalized.includes(recipeNormalized)
-    );
-  });
+  return fridgeList.some((fridgeItem) => ingredientMatches(recipeIngredient, fridgeItem));
 }
 
 function scoreRecipe(recipe, fridgeList, ignoreList) {

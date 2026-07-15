@@ -25,6 +25,11 @@ const { normalizeLang, t: translate } = require('./config/i18n');
 
 const app = express();
 
+// lightweight health check for uptime monitors (no DB/session)
+app.get('/ping', (req, res) => {
+  res.status(200).send('Alive');
+});
+
 // connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {

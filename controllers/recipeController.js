@@ -391,7 +391,7 @@ exports.getRecipeBySlug = async (req, res) => {
 
 exports.translateRecipe = async (req, res) => {
   try {
-    const recipe = await Recipe.findOne({ slug: req.params.slug }).select('title description updatedAt');
+    const recipe = await Recipe.findOne({ slug: req.params.slug }).select('title description ingredients updatedAt');
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found' });
     }
@@ -402,6 +402,7 @@ exports.translateRecipe = async (req, res) => {
     }
 
     const sourceDescription = stripHtml(recipe.description);
+    const sourceIngredients = (recipe.ingredients || []).join('，');
     const revision = (recipe.updatedAt || '').toString();
     const cacheKey = `${req.params.slug}:${targetLang}:${revision}`;
     const cached = getCachedTranslation(cacheKey);
@@ -411,24 +412,33 @@ exports.translateRecipe = async (req, res) => {
         targetLang,
         translatedTitle: cached.translatedTitle,
         translatedDescription: cached.translatedDescription,
+        translatedIngredients: cached.translatedIngredients || '',
         cached: true
       });
     }
 
-    const [translatedTitle, translatedDescription] = await Promise.all([
+    const translationTasks = [
       translateText(recipe.title, targetLang),
       translateText(sourceDescription, targetLang)
-    ]);
+    ];
+
+    if (sourceIngredients) {
+      translationTasks.push(translateText(sourceIngredients, targetLang));
+    }
+
+    const [translatedTitle, translatedDescription, translatedIngredients = ''] = await Promise.all(translationTasks);
 
     setCachedTranslation(cacheKey, {
       translatedTitle,
-      translatedDescription
+      translatedDescription,
+      translatedIngredients
     });
 
     res.json({
       targetLang,
       translatedTitle,
       translatedDescription,
+      translatedIngredients,
       cached: false
     });
   } catch (err) {

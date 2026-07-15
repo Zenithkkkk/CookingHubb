@@ -137,6 +137,7 @@ const TRANSLATIONS = {
       failed: 'Translation failed. Please try again later.',
       translatedTitle: 'Translated title',
       translatedDescription: 'Translated description',
+      translatedIngredients: 'Translated ingredients',
       translatedComment: 'Translated comment'
     },
     actions: {
@@ -386,6 +387,7 @@ const TRANSLATIONS = {
       failed: 'Übersetzung fehlgeschlagen. Bitte später erneut versuchen.',
       translatedTitle: 'Übersetzter Titel',
       translatedDescription: 'Übersetzte Beschreibung',
+      translatedIngredients: 'Übersetzte Zutaten',
       translatedComment: 'Übersetzter Kommentar'
     },
     actions: {
@@ -634,6 +636,7 @@ const TRANSLATIONS = {
       failed: 'La traducción falló. Inténtalo de nuevo más tarde.',
       translatedTitle: 'Título traducido',
       translatedDescription: 'Descripción traducida',
+      translatedIngredients: 'Ingredientes traducidos',
       translatedComment: 'Comentario traducido'
     },
     actions: {
@@ -882,6 +885,7 @@ const TRANSLATIONS = {
       failed: '翻译失败，请稍后重试。',
       translatedTitle: '翻译标题',
       translatedDescription: '翻译描述',
+      translatedIngredients: '翻译所需食材',
       translatedComment: '翻译评论'
     },
     actions: {

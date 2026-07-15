@@ -40,7 +40,7 @@
   </div>
 
   <% if (recipe.ingredients && recipe.ingredients.length > 0) { %>
-    <section class="recipe-ingredients">
+    <section class="recipe-ingredients" id="recipe-original-ingredients">
       <h2><%= t('recipes.requiredIngredients') %></h2>
       <p class="recipe-ingredients-text"><%= recipe.ingredients.join('，') %></p>
     </section>
@@ -55,6 +55,13 @@
     <p class="translation-label"><%= t('translation.translatedDescription') %></p>
     <p id="recipe-translated-description" class="translation-content"></p>
   </div>
+
+  <% if (recipe.ingredients && recipe.ingredients.length > 0) { %>
+    <div id="ingredients-translation-pair" class="translation-pair" style="display:none;">
+      <p class="translation-label"><%= t('translation.translatedIngredients') %></p>
+      <p id="recipe-translated-ingredients" class="translation-content recipe-ingredients-text"></p>
+    </div>
+  <% } %>
 
   <div class="recipe-actions">
   <!-- edit and delete buttons appear iff currently logged in user is recipe's author -->
@@ -220,8 +227,10 @@
     const langSelect = document.getElementById('translation-lang-select');
     const titlePair = document.getElementById('title-translation-pair');
     const descPair = document.getElementById('description-translation-pair');
+    const ingredientsPair = document.getElementById('ingredients-translation-pair');
     const translatedTitle = document.getElementById('recipe-translated-title');
     const translatedDesc = document.getElementById('recipe-translated-description');
+    const translatedIngredients = document.getElementById('recipe-translated-ingredients');
 
     const texts = {
       view: "<%= t('translation.viewTranslation') %>",
@@ -242,8 +251,14 @@
         const data = await res.json();
         translatedTitle.textContent = data.translatedTitle || '';
         translatedDesc.textContent = data.translatedDescription || '';
+        if (translatedIngredients) {
+          translatedIngredients.textContent = data.translatedIngredients || '';
+        }
         titlePair.style.display = 'block';
         descPair.style.display = 'block';
+        if (ingredientsPair && data.translatedIngredients) {
+          ingredientsPair.style.display = 'block';
+        }
         visible = true;
         translateBtn.textContent = texts.hide;
       } catch (err) {
@@ -258,6 +273,9 @@
       if (visible) {
         titlePair.style.display = 'none';
         descPair.style.display = 'none';
+        if (ingredientsPair) {
+          ingredientsPair.style.display = 'none';
+        }
         visible = false;
         translateBtn.textContent = texts.view;
         return;
