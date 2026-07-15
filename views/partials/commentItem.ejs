@@ -1,0 +1,124 @@
+<%
+  const nestDepth = typeof locals.depth === 'number' ? locals.depth : 0;
+  const indentPx = Math.min(nestDepth, 6) * 18;
+  const authorUsername = comment.author && comment.author.username ? comment.author.username : '';
+  const authorId = comment.author && comment.author._id ? comment.author._id.toString() : '';
+  const canDelete = currentUser && !comment.isDeleted && (currentUser.isAdmin || (authorId && authorId === currentUser._id.toString()));
+  const replyCount = Number(comment.replyCount) || 0;
+  const hasReplies = Array.isArray(comment.replies) && comment.replies.length > 0;
+  const isTopLevel = nestDepth === 0;
+  const repliesId = 'replies-' + comment._id;
+%>
+<div
+  class="comment-thread <%= nestDepth > 0 ? 'comment-thread-nested' : '' %>"
+  style="<%= nestDepth > 0 ? `margin-left:${indentPx}px;` : '' %>"
+>
+  <div
+    class="comment <%= nestDepth > 0 ? 'comment-reply' : '' %> <%= comment.isDeleted ? 'comment-deleted' : '' %>"
+    id="comment-<%= comment._id %>"
+  >
+    <div class="comment-meta">
+      <% if (comment.author) { %>
+        <a href="/profile/<%= authorUsername %>" class="comment-author">
+          <img
+            class="comment-author-avatar"
+            src="<%= (comment.author.profilePicture && (comment.author.profilePicture.startsWith('http') || comment.author.profilePicture.startsWith('/'))) ? comment.author.profilePicture : '/images/default-avatar.png' %>"
+            alt="<%= authorUsername %>"
+          >
+          <strong><%= authorUsername %></strong>
+        </a>
+      <% } else { %>
+        <strong class="comment-author-unknown"><%= t('comments.unknownUser') %></strong>
+      <% } %>
+
+      <% if (!comment.isDeleted && comment.rating) { %>
+        <span class="stars-display comment-stars">
+          <% for (let i = 1; i <= 5; i++) { %>
+            <span class="star <%= i <= comment.rating ? 'star-filled' : 'star-empty' %>">★</span>
+          <% } %>
+        </span>
+      <% } %>
+      <span class="comment-date"><%= new Date(comment.createdAt).toDateString() %></span>
+    </div>
+
+    <% if (comment.isDeleted) { %>
+      <p class="comment-body comment-body-deleted"><%= t('comments.deleted') %></p>
+    <% } else { %>
+      <% if (comment.replyTo && comment.replyTo.username) { %>
+        <p class="comment-reply-to"><%= t('comments.replyToLabel', { username: comment.replyTo.username }) %></p>
+      <% } %>
+      <p class="comment-body"><%= comment.body %></p>
+    <% } %>
+
+    <div class="comment-actions">
+      <% if (currentUser) { %>
+        <button
+          type="button"
+          class="comment-reply-link"
+          data-comment-id="<%= comment._id %>"
+          data-username="<%= authorUsername %>"
+        ><%= t('comments.reply') %></button>
+      <% } else { %>
+        <a href="/login" class="comment-reply-link"><%= t('comments.loginToReply') %></a>
+      <% } %>
+
+      <% if (!comment.isDeleted) { %>
+        <button type="button" class="btn btn-secondary comment-translate-btn" data-comment-id="<%= comment._id %>"><%= t('translation.viewTranslation') %></button>
+        <select class="comment-translation-lang" aria-label="<%= t('translation.languageLabel') %>">
+          <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+          <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Deutsch</option>
+          <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Español</option>
+          <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>中文</option>
+        </select>
+      <% } %>
+
+      <% if (canDelete) { %>
+        <form action="/recipes/<%= recipe.slug %>/comments/<%= comment._id %>?_method=DELETE" method="POST" class="comment-delete-form">
+          <button type="submit" class="btn btn-danger comment-delete-btn"><%= t('actions.delete') %></button>
+        </form>
+      <% } %>
+    </div>
+
+    <% if (!comment.isDeleted) { %>
+      <div class="translation-pair comment-translation-pair" data-comment-translation="<%= comment._id %>" style="display:none;">
+        <p class="translation-label"><%= t('translation.translatedComment') %></p>
+        <p class="translation-content"></p>
+      </div>
+    <% } %>
+
+    <% if (isTopLevel && hasReplies) { %>
+      <button
+        type="button"
+        class="comment-expand-btn"
+        data-replies-id="<%= repliesId %>"
+        data-expand-label="<%= t('comments.expandReplies', { count: replyCount }) %>"
+        aria-expanded="false"
+      >
+        <span class="comment-expand-line" aria-hidden="true"></span>
+        <span class="comment-expand-text"><%= t('comments.expandReplies', { count: replyCount }) %></span>
+      </button>
+    <% } %>
+  </div>
+
+  <% if (isTopLevel && hasReplies) { %>
+    <div class="comment-replies" id="<%= repliesId %>" hidden>
+      <% comment.replies.forEach(function(reply) { %>
+        <%- include('commentItem', { comment: reply, depth: 1, recipe: recipe }) %>
+      <% }) %>
+      <button
+        type="button"
+        class="comment-collapse-btn"
+        data-replies-id="<%= repliesId %>"
+      >
+        <span class="comment-expand-line" aria-hidden="true"></span>
+        <%= t('comments.collapseReplies') %>
+      </button>
+    </div>
+  <% } else if (!isTopLevel && hasReplies) { %>
+    <div class="comment-replies comment-replies-inline">
+      <% comment.replies.forEach(function(reply) { %>
+        <%- include('commentItem', { comment: reply, depth: nestDepth + 1, recipe: recipe }) %>
+      <% }) %>
+    </div>
+  <% } %>
+</div>

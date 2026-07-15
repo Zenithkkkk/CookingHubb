@@ -11,6 +11,7 @@ const {
 const { buildTagFilterConditionAsync, buildTagsSearchTerms } = require('../config/tagSearch');
 const { translateText } = require('../config/translate');
 const { extractIngredientsFromDescription } = require('../config/extractIngredients');
+const { buildCommentTree } = require('./commentController');
 
 const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Drink'];
 const TRANSLATABLE_LANGUAGES = new Set(['en', 'de', 'es', 'zh']);
@@ -365,11 +366,17 @@ exports.getRecipeBySlug = async (req, res) => {
         return res.status(404).render('404');
       }
 
-      const comments = await Comment.find({ recipe: recipe._id })
-      .populate('author')
-      .sort({ createdAt: -1 });
+      const flatComments = await Comment.find({ recipe: recipe._id })
+        .populate('author')
+        .populate('replyTo', 'username')
+        .sort({ createdAt: -1 });
 
-      const ratedComments = comments.filter(comment => comment.rating);
+      const comments = buildCommentTree(flatComments);
+      const totalCommentCount = flatComments.length;
+
+      const ratedComments = flatComments.filter(
+        (comment) => !comment.parent && !comment.isDeleted && comment.rating
+      );
       const averageRating = ratedComments.length
         ? (ratedComments.reduce((sum, comment) => sum + comment.rating, 0) / ratedComments.length)
         : null;
@@ -379,6 +386,7 @@ exports.getRecipeBySlug = async (req, res) => {
       res.render('recipes/show', {
         recipe,
         comments,
+        totalCommentCount,
         averageRating,
         reviewCount: ratedComments.length,
         recipeShareUrl

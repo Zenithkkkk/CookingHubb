@@ -23,99 +23,169 @@ function setCachedCommentTranslation(cacheKey, value) {
 }
 
 exports.createComment = async (req, res) => {
-    try {
-      const recipe = await Recipe.findOne({ slug: req.params.slug });
-      if (!recipe) return res.status(404).render('404');
+  try {
+    const recipe = await Recipe.findOne({ slug: req.params.slug });
+    if (!recipe) return res.status(404).render('404');
 
-      const rating = parseInt(req.body.rating, 10);
-      if (!rating || rating < 1 || rating > 5) {
+    const body = typeof req.body.body === 'string' ? req.body.body.trim() : '';
+    if (!body) {
+      return res.redirect(`/recipes/${recipe.slug}`);
+    }
+
+    const parentId = typeof req.body.parentId === 'string' ? req.body.parentId.trim() : '';
+
+    if (parentId) {
+      const parentComment = await Comment.findById(parentId).populate('author');
+      if (!parentComment || parentComment.recipe.toString() !== recipe._id.toString()) {
         return res.redirect(`/recipes/${recipe.slug}`);
       }
 
       await Comment.create({
-        body: req.body.body,
-        rating,
+        body,
         author: req.user._id,
-        recipe: recipe._id
+        recipe: recipe._id,
+        parent: parentComment._id,
+        replyTo: parentComment.author._id || parentComment.author
       });
 
-      res.redirect(`/recipes/${recipe.slug}`);
-    } catch (err) {
-      console.error(err);
-      res.redirect('/recipes');
+      return res.redirect(`/recipes/${recipe.slug}#comments`);
     }
+
+    const rating = parseInt(req.body.rating, 10);
+    if (!rating || rating < 1 || rating > 5) {
+      return res.redirect(`/recipes/${recipe.slug}`);
+    }
+
+    await Comment.create({
+      body,
+      rating,
+      author: req.user._id,
+      recipe: recipe._id,
+      parent: null,
+      replyTo: null
+    });
+
+    res.redirect(`/recipes/${recipe.slug}#comments`);
+  } catch (err) {
+    console.error(err);
+    res.redirect('/recipes');
+  }
+};
+
+exports.deleteComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId).populate('recipe');
+    if (!comment) return res.status(404).render('404');
+
+    if (!req.user.isAdmin && comment.author.toString() !== req.user._id.toString()) {
+      return res.redirect(`/recipes/${comment.recipe.slug}`);
+    }
+
+    comment.isDeleted = true;
+    comment.body = '[deleted]';
+    await comment.save();
+
+    res.redirect(`/recipes/${comment.recipe.slug}#comments`);
+  } catch (err) {
+    console.error(err);
+    res.redirect('/recipes');
+  }
+};
+
+exports.toggleLike = async (req, res) => {
+  try {
+    const recipe = await Recipe.findOne({ slug: req.params.slug });
+    if (!recipe) return res.status(404).render('404');
+
+    const userId = req.user._id.toString();
+    const alreadyLiked = recipe.likes.some(id => id.toString() === userId);
+
+    if (alreadyLiked) {
+      recipe.likes = recipe.likes.filter(id => id.toString() !== userId);
+    } else {
+      recipe.likes.push(req.user._id);
+    }
+
+    await recipe.save();
+    res.redirect(`/recipes/${recipe.slug}`);
+  } catch (err) {
+    console.error(err);
+    res.redirect('/recipes');
+  }
+};
+
+exports.translateComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId).select('body isDeleted updatedAt');
+    if (!comment || comment.isDeleted) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const targetLang = String(req.query.targetLang || '').trim().toLowerCase();
+    if (!COMMENT_TRANSLATABLE_LANGUAGES.has(targetLang)) {
+      return res.status(400).json({ error: 'Unsupported language' });
+    }
+
+    const revision = (comment.updatedAt || comment._id || '').toString();
+    const cacheKey = `${comment._id}:${targetLang}:${revision}`;
+    const cached = getCachedCommentTranslation(cacheKey);
+    if (cached) {
+      return res.json({ translatedBody: cached, cached: true });
+    }
+
+    const translatedBody = await translateText(comment.body, targetLang);
+    setCachedCommentTranslation(cacheKey, translatedBody);
+    return res.json({ translatedBody, cached: false });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      error: 'Comment translation failed',
+      hint: 'Check AZURE_TRANSLATOR_KEY / AZURE_TRANSLATOR_REGION, or fallback LibreTranslate settings.'
+    });
+  }
+};
+
+function buildCommentTree(flatComments) {
+  const byId = new Map();
+  const roots = [];
+
+  flatComments.forEach((comment) => {
+    const node = comment.toObject ? comment.toObject({ virtuals: true }) : { ...comment };
+    node.replies = [];
+    byId.set(node._id.toString(), node);
+  });
+
+  byId.forEach((node) => {
+    const parentId = node.parent ? node.parent.toString() : null;
+    if (parentId && byId.has(parentId)) {
+      byId.get(parentId).replies.push(node);
+    } else {
+      roots.push(node);
+    }
+  });
+
+  const sortRecursive = (nodes) => {
+    nodes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    nodes.forEach((node) => {
+      sortRecursive(node.replies);
+      node.replyCount = node.replies.reduce(
+        (sum, child) => sum + 1 + (child.replyCount || 0),
+        0
+      );
+    });
   };
 
-  exports.deleteComment = async (req, res) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId).populate('recipe');
-      if (!comment) return res.status(404).render('404');
-        
-      // verify ownership or admin
-      if (!req.user.isAdmin && comment.author.toString() !== req.user._id.toString()) {
-        return res.redirect(`/recipes/${comment.recipe.slug}`);
-      }
+  // Root comments keep newest first to match previous behavior
+  roots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  roots.forEach((node) => {
+    sortRecursive(node.replies);
+    node.replyCount = node.replies.reduce(
+      (sum, child) => sum + 1 + (child.replyCount || 0),
+      0
+    );
+  });
 
-      // redirect back to user's previous page
-      await Comment.deleteOne({ _id: comment._id });
-      res.redirect(`/recipes/${comment.recipe.slug}`);
-    } catch (err) {
-      console.error(err);
-      res.redirect('/recipes');
-    }
-  };
+  return roots;
+}
 
-  exports.toggleLike = async (req, res) => {
-    try {
-      const recipe = await Recipe.findOne({ slug: req.params.slug });
-      if (!recipe) return res.status(404).render('404');
-  
-      const userId = req.user._id.toString();
-      const alreadyLiked = recipe.likes.some(id => id.toString() === userId); // array of user IDs who liked this recipe (check if user has already liked it with .some())
-  
-      if (alreadyLiked) {
-        // if already liked and clicked --> remove like
-        recipe.likes = recipe.likes.filter(id => id.toString() !== userId); 
-      } else {
-        // if not liked yet, add their ID (like)
-        recipe.likes.push(req.user._id);
-      }
-  
-      await recipe.save();
-      res.redirect(`/recipes/${recipe.slug}`);
-    } catch (err) {
-      console.error(err);
-      res.redirect('/recipes');
-    }
-  };
-
-  exports.translateComment = async (req, res) => {
-    try {
-      const comment = await Comment.findById(req.params.commentId).select('body updatedAt');
-      if (!comment) {
-        return res.status(404).json({ error: 'Comment not found' });
-      }
-
-      const targetLang = String(req.query.targetLang || '').trim().toLowerCase();
-      if (!COMMENT_TRANSLATABLE_LANGUAGES.has(targetLang)) {
-        return res.status(400).json({ error: 'Unsupported language' });
-      }
-
-      const revision = (comment.updatedAt || comment._id || '').toString();
-      const cacheKey = `${comment._id}:${targetLang}:${revision}`;
-      const cached = getCachedCommentTranslation(cacheKey);
-      if (cached) {
-        return res.json({ translatedBody: cached, cached: true });
-      }
-
-      const translatedBody = await translateText(comment.body, targetLang);
-      setCachedCommentTranslation(cacheKey, translatedBody);
-      return res.json({ translatedBody, cached: false });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({
-        error: 'Comment translation failed',
-        hint: 'Check AZURE_TRANSLATOR_KEY / AZURE_TRANSLATOR_REGION, or fallback LibreTranslate settings.'
-      });
-    }
-  };
+exports.buildCommentTree = buildCommentTree;
