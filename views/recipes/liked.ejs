@@ -1,23 +1,21 @@
 <%- include('../partials/header') %>
 
 <div class="page-header liked-page-header">
-  <div class="liked-page-header-main">
-    <h1><%= t('page.likedRecipes') %></h1>
-    <form class="liked-visibility-form" action="/recipes/liked/visibility" method="POST">
-      <input type="hidden" name="showOnProfile" id="showOnProfile-value" value="<%= showLikedRecipesOnProfile ? 'true' : 'false' %>">
-      <label class="toggle-switch" for="showOnProfile-toggle">
-        <input
-          type="checkbox"
-          id="showOnProfile-toggle"
-          <%= showLikedRecipesOnProfile ? 'checked' : '' %>
-          onchange="document.getElementById('showOnProfile-value').value = this.checked ? 'true' : 'false'; this.form.submit();"
-        >
-        <span class="toggle-slider" aria-hidden="true"></span>
-        <span class="toggle-label"><%= t('liked.showOnProfile') %></span>
-      </label>
-    </form>
-  </div>
-  <a href="/recipes" class="btn btn-secondary"><%= t('common.backToAllRecipes') %></a>
+  <h1 class="liked-page-title"><%= t('page.likedRecipes') %></h1>
+  <form class="liked-visibility-form" action="/recipes/liked/visibility" method="POST">
+    <input type="hidden" name="showOnProfile" id="showOnProfile-value" value="<%= showLikedRecipesOnProfile ? 'true' : 'false' %>">
+    <label class="toggle-switch" for="showOnProfile-toggle">
+      <input
+        type="checkbox"
+        id="showOnProfile-toggle"
+        <%= showLikedRecipesOnProfile ? 'checked' : '' %>
+        onchange="document.getElementById('showOnProfile-value').value = this.checked ? 'true' : 'false'; this.form.submit();"
+      >
+      <span class="toggle-slider" aria-hidden="true"></span>
+      <span class="toggle-label"><%= t('liked.showOnProfile') %></span>
+    </label>
+  </form>
+  <a href="/recipes" class="btn btn-secondary liked-back-btn"><%= t('common.backToAllRecipes') %></a>
 </div>
 
 <% if (recipes.length === 0) { %>

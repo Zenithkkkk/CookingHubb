@@ -1,0 +1,57 @@
+<div class="ingredients-field-header">
+  <label for="ingredients"><%= t('form.ingredientsLabel') %></label>
+  <button
+    type="button"
+    id="extract-ingredients-btn"
+    class="btn btn-secondary extract-ingredients-btn"
+    data-empty-msg="<%= t('form.extractIngredientsEmpty') %>"
+    data-none-msg="<%= t('form.extractIngredientsNone') %>"
+  >
+    <%= t('form.extractIngredientsButton') %>
+  </button>
+</div>
+<textarea id="ingredients" name="ingredients" rows="6" placeholder="<%= t('form.ingredientsPlaceholder') %>"><%= typeof ingredientsValue !== 'undefined' ? ingredientsValue : '' %></textarea>
+
+<script>
+  (function () {
+    const extractBtn = document.getElementById('extract-ingredients-btn');
+    if (!extractBtn) return;
+
+    extractBtn.addEventListener('click', async function () {
+      const descriptionField = document.getElementById('description');
+      const ingredientsField = document.getElementById('ingredients');
+      const description = descriptionField ? descriptionField.value.trim() : '';
+
+      if (!description) {
+        alert(extractBtn.dataset.emptyMsg || 'Please fill in the description first.');
+        return;
+      }
+
+      extractBtn.disabled = true;
+
+      try {
+        const response = await fetch('/recipes/extract-ingredients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description })
+        });
+
+        const data = await response.json();
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients : [];
+
+        if (!ingredients.length) {
+          alert(extractBtn.dataset.noneMsg || 'No ingredients were found in the description.');
+          return;
+        }
+
+        if (ingredientsField) {
+          ingredientsField.value = ingredients.join('\n');
+        }
+      } catch (error) {
+        alert(extractBtn.dataset.noneMsg || 'No ingredients were found in the description.');
+      } finally {
+        extractBtn.disabled = false;
+      }
+    });
+  })();
+</script>

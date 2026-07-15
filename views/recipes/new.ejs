@@ -16,6 +16,8 @@
   <label for="description"><%= t('form.descriptionInstructions') %></label>
   <textarea id="description" name="description" rows="10" required></textarea>
 
+  <%- include('../partials/ingredientsField') %>
+
   <label for="category"><%= t('form.categoryLabel') %></label>
   <select id="category" name="category" required>
     <!-- this section matches enum on recipe's model -->

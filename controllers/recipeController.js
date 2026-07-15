@@ -10,6 +10,7 @@ const {
 } = require('../config/stapleSearch');
 const { buildTagFilterConditionAsync, buildTagsSearchTerms } = require('../config/tagSearch');
 const { translateText } = require('../config/translate');
+const { extractIngredientsFromDescription } = require('../config/extractIngredients');
 
 const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Drink'];
 const TRANSLATABLE_LANGUAGES = new Set(['en', 'de', 'es', 'zh']);
@@ -48,6 +49,14 @@ function setCachedTranslation(cacheKey, value) {
     createdAt: Date.now(),
     value
   });
+}
+
+function parseIngredients(raw) {
+  if (!raw || typeof raw !== 'string') return [];
+  return raw
+    .split(/[\n,，]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 async function uploadToCloudinary(source, folder = 'recipe-blog/recipes') {
@@ -98,11 +107,23 @@ exports.getNewRecipeForm = (req, res) => {
     res.render('recipes/new');
   };
 
+exports.extractIngredientsFromDescription = (req, res) => {
+  try {
+    const description = typeof req.body.description === 'string' ? req.body.description : '';
+    const ingredients = extractIngredientsFromDescription(description);
+    res.json({ ingredients });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ingredients: [] });
+  }
+};
+
 // pull text fields out of the submitted form data
 exports.createRecipe = async (req, res) => {
   try {
-    const { title, description, category, tags, croppedImage, originalImage, imageUrl: externalImageUrl } = req.body;
+    const { title, description, ingredients, category, tags, croppedImage, originalImage, imageUrl: externalImageUrl } = req.body;
     const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+    const ingredientsArray = parseIngredients(ingredients);
     const imageResult = await resolveRecipeImage({
       croppedImage,
       originalImage,
@@ -123,6 +144,7 @@ exports.createRecipe = async (req, res) => {
     const recipe = new Recipe({
       title,
       description,
+      ingredients: ingredientsArray,
       category,
       tags: tagsArray,
       tagsSearchTerms,
@@ -142,6 +164,54 @@ exports.createRecipe = async (req, res) => {
 
 exports.getLeaderboard = async (req, res) => {
   try {
+    const tab = req.query.tab === 'contributors' ? 'contributors' : 'recipes';
+
+    if (tab === 'contributors') {
+      const grouped = await Recipe.aggregate([
+        { $group: { _id: '$author', count: { $sum: 1 } } },
+        { $sort: { count: -1, _id: 1 } }
+      ]);
+
+      const authorIds = grouped.map((entry) => entry._id);
+      const [authors, authorRecipes] = await Promise.all([
+        User.find({ _id: { $in: authorIds } }),
+        Recipe.find({ author: { $in: authorIds } })
+          .sort({ createdAt: -1 })
+          .select('title slug author')
+      ]);
+
+      const authorMap = new Map(authors.map((author) => [author._id.toString(), author]));
+      const recipesMap = new Map();
+
+      authorRecipes.forEach((recipe) => {
+        const key = recipe.author.toString();
+        if (!recipesMap.has(key)) {
+          recipesMap.set(key, []);
+        }
+        recipesMap.get(key).push(recipe);
+      });
+
+      const contributors = grouped
+        .map((entry, index) => {
+          const author = authorMap.get(entry._id.toString());
+          if (!author) return null;
+
+          return {
+            rank: index + 1,
+            author,
+            count: entry.count,
+            recipes: (recipesMap.get(entry._id.toString()) || []).slice(0, 3)
+          };
+        })
+        .filter(Boolean);
+
+      return res.render('recipes/leaderboard', {
+        tab,
+        recipes: [],
+        contributors
+      });
+    }
+
     const recipes = await Recipe.find()
       .populate('author')
       .sort({ createdAt: -1 });
@@ -152,7 +222,11 @@ exports.getLeaderboard = async (req, res) => {
       return b.createdAt - a.createdAt;
     });
 
-    res.render('recipes/leaderboard', { recipes });
+    res.render('recipes/leaderboard', {
+      tab,
+      recipes,
+      contributors: []
+    });
   } catch (err) {
     console.error(err);
     res.redirect('/recipes');
@@ -393,8 +467,9 @@ exports.getEditRecipeForm = async (req, res) => {
         return res.redirect('/recipes');
       }
   
-      const { title, description, category, tags, croppedImage, originalImage, imageUrl: externalImageUrl } = req.body;
+      const { title, description, ingredients, category, tags, croppedImage, originalImage, imageUrl: externalImageUrl } = req.body;
       const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+      const ingredientsArray = parseIngredients(ingredients);
       const imageResult = await resolveRecipeImage({
         croppedImage,
         originalImage,
@@ -413,6 +488,7 @@ exports.getEditRecipeForm = async (req, res) => {
 
       recipe.title = title;
       recipe.description = description;
+      recipe.ingredients = ingredientsArray;
       recipe.category = category;
       recipe.tags = tagsArray;
       recipe.tagsSearchTerms = await buildTagsSearchTerms(tagsArray);

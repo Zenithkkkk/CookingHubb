@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+<div class="fridge-page">
+  <aside class="fridge-sidebar">
+    <h1><%= t('fridge.title') %></h1>
+
+    <label class="fridge-field-label" for="ignoreText"><%= t('fridge.ignoreLabel') %></label>
+    <input
+      type="text"
+      id="ignoreText"
+      name="ignoreText"
+      form="fridge-match-form"
+      class="fridge-ignore-input"
+      value="<%= ignoreText %>"
+      placeholder="<%= ignorePlaceholder %>"
+    >
+
+    <form class="fridge-add-form" action="/fridge/ingredients" method="POST">
+      <label class="fridge-field-label" for="ingredient"><%= t('fridge.addIngredientLabel') %></label>
+      <div class="fridge-input-row">
+        <input
+          type="text"
+          id="ingredient"
+          name="ingredient"
+          class="fridge-ingredient-input"
+          placeholder="<%= t('fridge.addIngredientPlaceholder') %>"
+        >
+        <button type="submit" class="btn btn-secondary fridge-add-btn">+</button>
+      </div>
+    </form>
+
+    <div class="fridge-tags" id="fridge-tags">
+      <% if (fridgeIngredients.length === 0) { %>
+        <p class="fridge-tags-empty"><%= t('fridge.emptyFridge') %></p>
+      <% } else { %>
+        <% fridgeIngredients.forEach(item => { %>
+          <span class="fridge-tag">
+            <span class="fridge-tag-name"><%= item %></span>
+            <form action="/fridge/ingredients/remove/<%= encodeURIComponent(item) %>" method="POST" class="fridge-tag-remove-form">
+              <button type="submit" class="fridge-tag-remove" aria-label="<%= t('fridge.removeIngredient') %>">&times;</button>
+            </form>
+          </span>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <form id="fridge-match-form" action="/fridge/match" method="POST">
+      <button type="submit" class="btn btn-primary fridge-match-btn"><%= t('fridge.matchButton') %></button>
+    </form>
+  </aside>
+
+  <section class="fridge-results">
+    <% if (!hasMatched) { %>
+      <div class="fridge-results-placeholder">
+        <p><%= t('fridge.matchHint') %></p>
+      </div>
+    <% } else { %>
+      <% const sections = [
+        { key: 'perfect', title: t('fridge.groupPerfect') },
+        { key: 'almost', title: t('fridge.groupAlmost') },
+        { key: 'inspiration', title: t('fridge.groupInspiration') }
+      ]; %>
+
+      <% let hasAnyResult = false; %>
+      <% sections.forEach(section => { %>
+        <% const items = matchResults[section.key] || []; %>
+        <% if (items.length > 0) { %>
+          <% hasAnyResult = true; %>
+          <div class="fridge-result-group">
+            <h2 class="fridge-result-group-title"><%= section.title %></h2>
+            <div class="recipe-grid fridge-recipe-grid">
+              <% items.forEach(entry => { %>
+                <% const recipe = entry.recipe; %>
+                <article class="recipe-card fridge-recipe-card">
+                  <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
+                  <span class="fridge-match-badge"><%= t('fridge.matchScore', { score: entry.score }) %></span>
+                  <img src="<%= ((recipe.imageThumb || recipe.image).startsWith('http') || (recipe.imageThumb || recipe.image).startsWith('/')) ? (recipe.imageThumb || recipe.image) : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+                  <div class="recipe-card-body">
+                    <h3><%= recipe.title %></h3>
+                    <p><%= t('recipes.categoryLabel') %> <%= t('categories.' + recipe.category) || recipe.category %></p>
+                    <% if (entry.missing.length > 0) { %>
+                      <p class="fridge-missing"><%= t('fridge.missingPrefix') %><%= entry.missing.join('，') %></p>
+                    <% } %>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+      <% }) %>
+
+      <% if (!hasAnyResult) { %>
+        <p class="fridge-no-results"><%= t('fridge.noResults') %></p>
+      <% } %>
+    <% } %>
+  </section>
+</div>
+
+<%- include('../partials/footer') %>

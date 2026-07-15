@@ -26,6 +26,11 @@ const RecipeSchema = new mongoose.Schema({
         required: true
       },
 
+      ingredients: {
+        type: [String],
+        default: []
+      },
+
       category: {
         type: String,
         required: true,

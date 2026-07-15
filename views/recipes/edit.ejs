@@ -16,6 +16,8 @@
   <label for="description"><%= t('form.descriptionInstructions') %></label>
   <textarea id="description" name="description" rows="10" required><%= recipe.description %></textarea>
 
+  <%- include('../partials/ingredientsField', { ingredientsValue: (recipe.ingredients || []).join('\n') }) %>
+
   <label for="category"><%= t('form.categoryLabel') %></label>
   <select id="category" name="category" required>
     <option value=""><%= t('categories.selectCategory') %></option>

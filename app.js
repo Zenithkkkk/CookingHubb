@@ -1,4 +1,19 @@
 require('dotenv').config();
+
+const nodeMajor = parseInt(process.version.slice(1).split('.')[0], 10);
+if (nodeMajor < 20 || nodeMajor >= 25) {
+  console.error(`当前 Node 版本 ${process.version} 可能导致启动卡住。请先运行: nvm use 20`);
+  process.exit(1);
+}
+
+process.on('unhandledRejection', (reason) => {
+  console.error('发现未捕获的 Promise 拒绝 (极可能是数据库连接超时):', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('发现未捕获的异常:', err);
+});
+
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -83,6 +98,7 @@ app.use('/', require('./routes/authRoutes')); //any route defined here is mounte
 app.use('/', require('./routes/languageRoutes'));
 app.use('/recipes', require('./routes/recipeRoutes')); // mount routes under /recipe
 app.use('/profile', require('./routes/profileRoutes'));
+app.use('/fridge', require('./routes/fridgeRoutes'));
 app.use('/', require('./routes/contactRoutes'));
 
 const PORT = process.env.PORT || 3000; // start server from PORT from .env, otherwise 3000

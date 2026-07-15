@@ -5,13 +5,14 @@ const TRANSLATIONS = {
     },
     nav: {
       recipes: 'Recipes',
-      likedRecipes: 'Liked Recipes',
+      likedRecipes: 'Like',
       myProfile: 'My Profile',
       login: 'Login',
       register: 'Register',
       logout: 'Logout',
       contactUs: 'Contact Us',
-      leaderboard: 'Leaderboard'
+      leaderboard: 'Leaderboard',
+      myFridge: 'My Fridge'
     },
     common: {
       search: 'Search',
@@ -69,10 +70,12 @@ const TRANSLATIONS = {
       noRecipesMatch: 'No recipes match your search. Try different keywords or filters.',
       noRecipesYet: 'No recipes yet. Be the first to add one!',
       foundOne: '{{count}} recipe found',
-      foundMany: '{{count}} recipes found'
+      foundMany: '{{count}} recipes found',
+      requiredIngredients: 'Required Ingredients',
+      noIngredientsYet: 'No ingredients listed yet.'
     },
     page: {
-      likedRecipes: 'Liked Recipes',
+      likedRecipes: 'My Liked Recipes',
       editRecipe: 'Edit Recipe',
       addNewRecipe: 'Add New Recipe',
       profileEdit: 'Edit Profile',
@@ -81,8 +84,18 @@ const TRANSLATIONS = {
       leaderboard: 'Leaderboard'
     },
     leaderboard: {
+      tabRecipes: 'Recipe Leaderboard',
+      tabContributors: 'Contributor Leaderboard',
       subtitle: 'This ranking is sorted by recipe likes from highest to lowest.',
-      empty: 'No recipes on the leaderboard yet.'
+      contributorsSubtitle: 'This ranking is sorted by the number of recipes each author has contributed.',
+      empty: 'No recipes on the leaderboard yet.',
+      contributorsEmpty: 'No contributors on the leaderboard yet.',
+      colRank: 'Rank',
+      colAuthor: 'Author',
+      colCount: 'Contributions',
+      colRecipes: 'Contributed Recipes',
+      recipeCount: '{{count}}',
+      expandMore: 'View more'
     },
     like: {
       like: 'Like',
@@ -159,6 +172,11 @@ const TRANSLATIONS = {
     },
     form: {
       descriptionInstructions: 'Description / Instructions',
+      ingredientsLabel: 'Required Ingredients',
+      ingredientsPlaceholder: 'One ingredient per line, e.g.\nChicken breast\nTomato\nSalt',
+      extractIngredientsButton: 'Extract from description',
+      extractIngredientsEmpty: 'Please fill in the description first.',
+      extractIngredientsNone: 'No ingredients were found in the description.',
       title: 'Title',
       categoryLabel: 'Category',
       tagsLabel: 'Tags (comma separated)',
@@ -211,6 +229,23 @@ const TRANSLATIONS = {
       messageRequired: 'Please briefly describe your issue.',
       mailNotConfigured: 'Email service is not configured yet. Please try again later.',
       sendFailed: 'Failed to send your message. Please try again later.'
+    },
+    fridge: {
+      title: 'My Fridge',
+      ignoreLabel: 'Ignore when matching',
+      ignorePlaceholder: 'Already ignoring oil, salt, sugar, light soy sauce, vinegar',
+      addIngredientLabel: 'Add ingredient',
+      addIngredientPlaceholder: 'e.g. tomato',
+      emptyFridge: 'No ingredients yet. Add some above.',
+      removeIngredient: 'Remove ingredient',
+      matchButton: 'Match Recipes',
+      matchHint: 'Add ingredients on the left, then click match to see recipes.',
+      groupPerfect: 'Perfect',
+      groupAlmost: 'Almost there',
+      groupInspiration: 'Inspiration',
+      matchScore: 'Match {{score}}%',
+      missingPrefix: 'Missing: ',
+      noResults: 'No recipes matched at 30% or above. Try adding more ingredients.'
     }
   },
   de: {
@@ -219,13 +254,14 @@ const TRANSLATIONS = {
     },
     nav: {
       recipes: 'Rezepte',
-      likedRecipes: 'Favorisierte Rezepte',
+      likedRecipes: 'Gefällt mir',
       myProfile: 'Mein Profil',
       login: 'Anmelden',
       register: 'Registrieren',
       logout: 'Abmelden',
       contactUs: 'Kontakt',
-      leaderboard: 'Rangliste'
+      leaderboard: 'Rangliste',
+      myFridge: 'Mein Kühlschrank'
     },
     common: {
       search: 'Suche',
@@ -283,10 +319,12 @@ const TRANSLATIONS = {
       noRecipesMatch: 'Keine Rezepte passen zu deiner Suche. Bitte andere Stichwörter oder Filter ausprobieren.',
       noRecipesYet: 'Noch keine Rezepte. Sei der Erste!',
       foundOne: '{{count}} Rezept gefunden',
-      foundMany: '{{count}} Rezepte gefunden'
+      foundMany: '{{count}} Rezepte gefunden',
+      requiredIngredients: 'Benötigte Zutaten',
+      noIngredientsYet: 'Noch keine Zutaten angegeben.'
     },
     page: {
-      likedRecipes: 'Favorisierte Rezepte',
+      likedRecipes: 'Meine favorisierten Rezepte',
       editRecipe: 'Rezept bearbeiten',
       addNewRecipe: 'Neues Rezept hinzufügen',
       profileEdit: 'Profil bearbeiten',
@@ -295,8 +333,18 @@ const TRANSLATIONS = {
       leaderboard: 'Rangliste'
     },
     leaderboard: {
+      tabRecipes: 'Rezept-Rangliste',
+      tabContributors: 'Beitrags-Rangliste',
       subtitle: 'Diese Rangliste ist nach der Anzahl der Likes sortiert (höchste zuerst).',
-      empty: 'Noch keine Rezepte in der Rangliste.'
+      contributorsSubtitle: 'Diese Rangliste sortiert Autoren nach der Anzahl ihrer beigetragenen Rezepte.',
+      empty: 'Noch keine Rezepte in der Rangliste.',
+      contributorsEmpty: 'Noch keine Beiträge in der Rangliste.',
+      colRank: 'Rang',
+      colAuthor: 'Autor',
+      colCount: 'Beiträge',
+      colRecipes: 'Beigetragene Rezepte',
+      recipeCount: '{{count}}',
+      expandMore: 'Mehr anzeigen'
     },
     like: {
       like: 'Gefällt mir',
@@ -373,6 +421,11 @@ const TRANSLATIONS = {
     },
     form: {
       descriptionInstructions: 'Beschreibung / Anleitung',
+      ingredientsLabel: 'Benötigte Zutaten',
+      ingredientsPlaceholder: 'Eine Zutat pro Zeile, z. B.\nHähnchenbrust\nTomate\nSalz',
+      extractIngredientsButton: 'Aus Beschreibung extrahieren',
+      extractIngredientsEmpty: 'Bitte zuerst die Beschreibung ausfüllen.',
+      extractIngredientsNone: 'In der Beschreibung wurden keine Zutaten erkannt.',
       title: 'Titel',
       categoryLabel: 'Kategorie',
       tagsLabel: 'Tags (kommagetrennt)',
@@ -424,6 +477,23 @@ const TRANSLATIONS = {
       messageRequired: 'Bitte beschreiben Sie Ihr Anliegen kurz.',
       mailNotConfigured: 'Der E-Mail-Dienst ist noch nicht konfiguriert. Bitte versuchen Sie es später erneut.',
       sendFailed: 'Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.'
+    },
+    fridge: {
+      title: 'Mein Kühlschrank',
+      ignoreLabel: 'Beim Abgleich ignorieren',
+      ignorePlaceholder: 'Bereits ignoriert: Öl, Salz, Zucker, helle Sojasauce, Essig',
+      addIngredientLabel: 'Zutat hinzufügen',
+      addIngredientPlaceholder: 'z. B. Tomate',
+      emptyFridge: 'Noch keine Zutaten. Oben hinzufügen.',
+      removeIngredient: 'Zutat entfernen',
+      matchButton: 'Rezepte abgleichen',
+      matchHint: 'Links Zutaten hinzufügen, dann auf Abgleichen klicken.',
+      groupPerfect: 'Perfekt',
+      groupAlmost: 'Fast geschafft',
+      groupInspiration: 'Inspiration',
+      matchScore: 'Übereinstimmung {{score}} %',
+      missingPrefix: 'Fehlt: ',
+      noResults: 'Keine Rezepte mit mindestens 30 % Übereinstimmung. Füge mehr Zutaten hinzu.'
     }
   },
   es: {
@@ -432,13 +502,14 @@ const TRANSLATIONS = {
     },
     nav: {
       recipes: 'Recetas',
-      likedRecipes: 'Recetas que te gustan',
+      likedRecipes: 'Me gusta',
       myProfile: 'Mi Perfil',
       login: 'Iniciar sesión',
       register: 'Registrarse',
       logout: 'Cerrar sesión',
       contactUs: 'Contáctanos',
-      leaderboard: 'Ranking'
+      leaderboard: 'Ranking',
+      myFridge: 'Mi nevera'
     },
     common: {
       search: 'Buscar',
@@ -496,10 +567,12 @@ const TRANSLATIONS = {
       noRecipesMatch: 'No hay recetas que coincidan con tu búsqueda. Prueba otras palabras o filtros.',
       noRecipesYet: 'Aún no hay recetas. ¡Sé el primero en agregar una!',
       foundOne: 'Se encontró {{count}} receta',
-      foundMany: 'Se encontraron {{count}} recetas'
+      foundMany: 'Se encontraron {{count}} recetas',
+      requiredIngredients: 'Ingredientes necesarios',
+      noIngredientsYet: 'Aún no hay ingredientes indicados.'
     },
     page: {
-      likedRecipes: 'Recetas que te gustan',
+      likedRecipes: 'Mis recetas favoritas',
       editRecipe: 'Editar receta',
       addNewRecipe: 'Agregar nueva receta',
       profileEdit: 'Editar perfil',
@@ -508,8 +581,18 @@ const TRANSLATIONS = {
       leaderboard: 'Ranking'
     },
     leaderboard: {
+      tabRecipes: 'Ranking de recetas',
+      tabContributors: 'Ranking de contribuciones',
       subtitle: 'Este ranking se ordena por cantidad de me gusta, de mayor a menor.',
-      empty: 'Aún no hay recetas en el ranking.'
+      contributorsSubtitle: 'Este ranking ordena a los autores según la cantidad de recetas que han aportado.',
+      empty: 'Aún no hay recetas en el ranking.',
+      contributorsEmpty: 'Aún no hay contribuciones en el ranking.',
+      colRank: 'Puesto',
+      colAuthor: 'Autor',
+      colCount: 'Contribuciones',
+      colRecipes: 'Recetas aportadas',
+      recipeCount: '{{count}}',
+      expandMore: 'Ver más'
     },
     like: {
       like: 'Me gusta',
@@ -586,6 +669,11 @@ const TRANSLATIONS = {
     },
     form: {
       descriptionInstructions: 'Descripción / Instrucciones',
+      ingredientsLabel: 'Ingredientes necesarios',
+      ingredientsPlaceholder: 'Un ingrediente por línea, p. ej.\nPechuga de pollo\nTomate\nSal',
+      extractIngredientsButton: 'Extraer de la descripción',
+      extractIngredientsEmpty: 'Primero complete la descripción.',
+      extractIngredientsNone: 'No se encontraron ingredientes en la descripción.',
       title: 'Título',
       categoryLabel: 'Categoría',
       tagsLabel: 'Etiquetas (separadas por comas)',
@@ -637,6 +725,23 @@ const TRANSLATIONS = {
       messageRequired: 'Por favor describa brevemente su problema.',
       mailNotConfigured: 'El servicio de correo aún no está configurado. Inténtelo más tarde.',
       sendFailed: 'No se pudo enviar su mensaje. Inténtelo más tarde.'
+    },
+    fridge: {
+      title: 'Mi nevera',
+      ignoreLabel: 'Ignorar al emparejar',
+      ignorePlaceholder: 'Ya ignorado: aceite, sal, azúcar, salsa de soja clara, vinagre',
+      addIngredientLabel: 'Agregar ingrediente',
+      addIngredientPlaceholder: 'p. ej. tomate',
+      emptyFridge: 'Aún no hay ingredientes. Agrega arriba.',
+      removeIngredient: 'Eliminar ingrediente',
+      matchButton: 'Emparejar recetas',
+      matchHint: 'Agrega ingredientes a la izquierda y pulsa emparejar.',
+      groupPerfect: 'Perfecto',
+      groupAlmost: 'Casi listo',
+      groupInspiration: 'Inspiración',
+      matchScore: 'Coincidencia {{score}} %',
+      missingPrefix: 'Falta: ',
+      noResults: 'No hay recetas con 30 % o más. Prueba agregando más ingredientes.'
     }
   },
   zh: {
@@ -645,13 +750,14 @@ const TRANSLATIONS = {
     },
     nav: {
       recipes: '食谱',
-      likedRecipes: '我喜欢的食谱',
+      likedRecipes: '喜欢',
       myProfile: '我的主页',
       login: '登录',
       register: '注册',
       logout: '退出登录',
       contactUs: '联系我们',
-      leaderboard: '排行榜'
+      leaderboard: '排行榜',
+      myFridge: '我的冰箱'
     },
     common: {
       search: '搜索',
@@ -709,7 +815,9 @@ const TRANSLATIONS = {
       noRecipesMatch: '没有食谱匹配你的搜索。请尝试更换关键词或筛选条件。',
       noRecipesYet: '还没有食谱。成为第一个吧！',
       foundOne: '找到 {{count}} 个食谱',
-      foundMany: '找到 {{count}} 个食谱'
+      foundMany: '找到 {{count}} 个食谱',
+      requiredIngredients: '所需食材',
+      noIngredientsYet: '暂无食材信息。'
     },
     page: {
       likedRecipes: '我喜欢的食谱',
@@ -721,8 +829,18 @@ const TRANSLATIONS = {
       leaderboard: '排行榜'
     },
     leaderboard: {
+      tabRecipes: '食谱排行榜',
+      tabContributors: '食谱贡献榜',
       subtitle: '此排行榜根据食谱的喜欢数量由高到低排行',
-      empty: '暂无食谱上榜。'
+      contributorsSubtitle: '此排行榜根据作者贡献食谱数量进行排行',
+      empty: '暂无食谱上榜。',
+      contributorsEmpty: '暂无作者上榜。',
+      colRank: '排行',
+      colAuthor: '作者',
+      colCount: '贡献数量',
+      colRecipes: '贡献食谱',
+      recipeCount: '{{count}}',
+      expandMore: '展开更多'
     },
     like: {
       like: '喜欢',
@@ -799,6 +917,11 @@ const TRANSLATIONS = {
     },
     form: {
       descriptionInstructions: '描述 / 使用说明',
+      ingredientsLabel: '所需食材',
+      ingredientsPlaceholder: '每行填写一种食材，例如：\n鸡胸肉\n番茄\n盐',
+      extractIngredientsButton: '根据描述匹配',
+      extractIngredientsEmpty: '请先在上方填写描述。',
+      extractIngredientsNone: '未能从描述中识别到食材。',
       title: '标题',
       categoryLabel: '餐类',
       tagsLabel: '标签（逗号分隔）',
@@ -850,6 +973,23 @@ const TRANSLATIONS = {
       messageRequired: '请简述您的问题。',
       mailNotConfigured: '邮件服务尚未配置，请稍后再试。',
       sendFailed: '发送失败，请稍后再试。'
+    },
+    fridge: {
+      title: '我的冰箱',
+      ignoreLabel: '匹配时忽略',
+      ignorePlaceholder: '已忽略油盐糖生抽醋',
+      addIngredientLabel: '添加食材',
+      addIngredientPlaceholder: '例如：番茄',
+      emptyFridge: '还没有食材，请在上方添加。',
+      removeIngredient: '移除食材',
+      matchButton: '匹配食谱',
+      matchHint: '在左侧添加食材后，点击匹配查看食谱。',
+      groupPerfect: '完美',
+      groupAlmost: '缺一点',
+      groupInspiration: '灵感',
+      matchScore: '匹配度 {{score}}%',
+      missingPrefix: '缺少：',
+      noResults: '没有匹配度达到 30% 以上的菜谱，请多添加一些食材。'
     }
   }
 };

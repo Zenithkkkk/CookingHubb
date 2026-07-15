@@ -55,6 +55,16 @@ const UserSchema = new mongoose.Schema({ // blueprint to define what a user doc 
         default: false
       },
 
+      fridgeIngredients: {
+        type: [String],
+        default: []
+      },
+
+      fridgeIgnoreText: {
+        type: String,
+        default: ''
+      },
+
       createdAt: {
         type: Date,
         default: Date.now

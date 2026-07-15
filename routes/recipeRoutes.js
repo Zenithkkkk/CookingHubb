@@ -15,6 +15,7 @@ router.get('/:slug/share-qr', recipeController.getRecipeShareQr);
 
 // create form if user is logged id
 router.get('/new', isAuthenticated, recipeController.getNewRecipeForm);
+router.post('/extract-ingredients', isAuthenticated, recipeController.extractIngredientsFromDescription);
 
 // form submission for logged-in users
 router.post('/', isAuthenticated, upload.single('image'), recipeController.createRecipe);
