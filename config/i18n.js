@@ -933,7 +933,7 @@ const TRANSLATIONS = {
       tabRatings: '评分排行榜',
       subtitle: '此排行榜根据食谱的喜欢数量由高到低排行',
       contributorsSubtitle: '此排行榜根据作者贡献食谱数量进行排行',
-      ratingsSubtitle: '此排行榜根据食谱平均评分由高到低排行，未评分的食谱排在最后',
+      ratingsSubtitle: '此排行榜根据食谱平均评分由高到低排行',
       empty: '暂无食谱上榜。',
       contributorsEmpty: '暂无作者上榜。',
       unrated: '未评分',
