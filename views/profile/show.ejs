@@ -2,15 +2,19 @@
 
 <div class="profile-header">
   <img src="<%= profileUser.profilePicture.startsWith('http') || profileUser.profilePicture.startsWith('/') ? profileUser.profilePicture : '/images/default-avatar.png' %>" alt="<%= profileUser.username %>'s profile picture">
-  <div class="profile-info"> 
-  <h1><%= profileUser.username %></h1>
-  <p><%= profileUser.bio || t('profile.noBioYet') %></p> 
-  <p><%= t('profile.memberSince') %> <%= profileUser.createdAt.toDateString() %></p>
+  <div class="profile-info">
+    <h1><%= profileUser.username %></h1>
+    <p><%= profileUser.bio || t('profile.noBioYet') %></p>
+    <p><%= t('profile.memberSince') %> <%= profileUser.createdAt.toDateString() %></p>
 
-  <% if (currentUser && currentUser._id.toString() === profileUser._id.toString()) { %>
-    <a href="/profile/edit/me" class="btn btn-secondary" style="margin-top: 0.75rem;"><%= t('actions.editProfile') %></a> <!-- only seen by logged in user -->
+    <% if (currentUser && currentUser._id.toString() === profileUser._id.toString()) { %>
+      <a href="/profile/edit/me" class="btn btn-secondary" style="margin-top: 0.75rem;"><%= t('actions.editProfile') %></a>
+    <% } %>
+  </div>
+
+  <% if (currentUser && currentUser.isAdmin && isOwnProfile) { %>
+    <a href="/admin/users" class="btn btn-primary profile-admin-users-btn"><%= t('admin.manageUsers') %></a>
   <% } %>
-</div>
 </div>
 
 <h2><%= t('profile.recipesBy', { username: profileUser.username }) %></h2>

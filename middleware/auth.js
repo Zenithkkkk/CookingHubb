@@ -4,3 +4,13 @@ exports.isAuthenticated = (req, res, next) => { //method for passport to add to 
     }
     res.redirect('/login');
   };
+
+exports.isAdmin = (req, res, next) => {
+  if (req.isAuthenticated() && req.user && req.user.isAdmin) {
+    return next();
+  }
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
+  }
+  return res.redirect('/recipes');
+};

@@ -165,7 +165,8 @@ exports.createRecipe = async (req, res) => {
 
 exports.getLeaderboard = async (req, res) => {
   try {
-    const tab = req.query.tab === 'contributors' ? 'contributors' : 'recipes';
+    const requestedTab = String(req.query.tab || 'recipes');
+    const tab = ['contributors', 'ratings'].includes(requestedTab) ? requestedTab : 'recipes';
 
     if (tab === 'contributors') {
       const grouped = await Recipe.aggregate([
@@ -217,15 +218,68 @@ exports.getLeaderboard = async (req, res) => {
       .populate('author')
       .sort({ createdAt: -1 });
 
-    recipes.sort((a, b) => {
-      const likeDiff = (b.likes?.length || 0) - (a.likes?.length || 0);
-      if (likeDiff !== 0) return likeDiff;
-      return b.createdAt - a.createdAt;
+    const ratingStats = await Comment.aggregate([
+      {
+        $match: {
+          rating: { $gte: 1, $lte: 5 },
+          $or: [{ parent: null }, { parent: { $exists: false } }],
+          isDeleted: { $ne: true }
+        }
+      },
+      {
+        $group: {
+          _id: '$recipe',
+          averageRating: { $avg: '$rating' },
+          reviewCount: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const ratingMap = new Map(
+      ratingStats.map((entry) => [
+        entry._id.toString(),
+        {
+          averageRating: Math.round(entry.averageRating * 10) / 10,
+          reviewCount: entry.reviewCount
+        }
+      ])
+    );
+
+    const recipesWithRatings = recipes.map((recipe) => {
+      const stats = ratingMap.get(recipe._id.toString());
+      return {
+        recipe,
+        averageRating: stats ? stats.averageRating : null,
+        reviewCount: stats ? stats.reviewCount : 0
+      };
     });
+
+    if (tab === 'ratings') {
+      recipesWithRatings.sort((a, b) => {
+        if (a.averageRating === null && b.averageRating === null) {
+          return b.recipe.createdAt - a.recipe.createdAt;
+        }
+        if (a.averageRating === null) return 1;
+        if (b.averageRating === null) return -1;
+        if (b.averageRating !== a.averageRating) {
+          return b.averageRating - a.averageRating;
+        }
+        if (b.reviewCount !== a.reviewCount) {
+          return b.reviewCount - a.reviewCount;
+        }
+        return b.recipe.createdAt - a.recipe.createdAt;
+      });
+    } else {
+      recipesWithRatings.sort((a, b) => {
+        const likeDiff = (b.recipe.likes?.length || 0) - (a.recipe.likes?.length || 0);
+        if (likeDiff !== 0) return likeDiff;
+        return b.recipe.createdAt - a.recipe.createdAt;
+      });
+    }
 
     res.render('recipes/leaderboard', {
       tab,
-      recipes,
+      recipes: recipesWithRatings,
       contributors: []
     });
   } catch (err) {

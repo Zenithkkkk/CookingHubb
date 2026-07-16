@@ -19,6 +19,14 @@
     >
       <%= t('leaderboard.tabContributors') %>
     </a>
+    <a
+      href="/recipes/leaderboard?tab=ratings"
+      class="leaderboard-tab <%= tab === 'ratings' ? 'is-active' : '' %>"
+      role="tab"
+      aria-selected="<%= tab === 'ratings' ? 'true' : 'false' %>"
+    >
+      <%= t('leaderboard.tabRatings') %>
+    </a>
   </div>
 </div>
 
@@ -71,19 +79,28 @@
     </div>
   <% } %>
 <% } else { %>
-  <p class="leaderboard-intro"><%= t('leaderboard.subtitle') %></p>
+  <p class="leaderboard-intro">
+    <%= tab === 'ratings' ? t('leaderboard.ratingsSubtitle') : t('leaderboard.subtitle') %>
+  </p>
 
   <% if (recipes.length === 0) { %>
     <p class="search-empty"><%= t('leaderboard.empty') %></p>
   <% } else { %>
     <div class="recipe-grid leaderboard-grid">
-      <% recipes.forEach((recipe, index) => { %>
+      <% recipes.forEach((entry, index) => { %>
+        <% const recipe = entry.recipe || entry; %>
+        <% const averageRating = entry.averageRating !== undefined ? entry.averageRating : null; %>
         <article class="recipe-card leaderboard-card">
           <span class="leaderboard-rank">#<%= index + 1 %></span>
-          <span class="leaderboard-likes">
-            ❤️ <%= recipe.likes.length %>
-            <%= recipe.likes.length === 1 ? t('like.one') : t('like.many') %>
+          <span class="leaderboard-rating <%= averageRating === null ? 'is-unrated' : '' %>">
+            <%= averageRating === null ? t('leaderboard.unrated') : averageRating.toFixed(1) %>
           </span>
+          <% if (tab === 'recipes') { %>
+            <span class="leaderboard-likes">
+              ❤️ <%= recipe.likes.length %>
+              <%= recipe.likes.length === 1 ? t('like.one') : t('like.many') %>
+            </span>
+          <% } %>
           <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
           <img src="<%= ((recipe.imageThumb || recipe.image).startsWith('http') || (recipe.imageThumb || recipe.image).startsWith('/')) ? (recipe.imageThumb || recipe.image) : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
           <div class="recipe-card-body">

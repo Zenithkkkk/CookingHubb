@@ -104,6 +104,7 @@ app.use('/', require('./routes/languageRoutes'));
 app.use('/recipes', require('./routes/recipeRoutes')); // mount routes under /recipe
 app.use('/profile', require('./routes/profileRoutes'));
 app.use('/fridge', require('./routes/fridgeRoutes'));
+app.use('/admin', require('./routes/adminRoutes'));
 app.use('/', require('./routes/contactRoutes'));
 
 const PORT = process.env.PORT || 3000; // start server from PORT from .env, otherwise 3000

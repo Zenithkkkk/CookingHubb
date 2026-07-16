@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <h1><%= t('admin.usersTitle') %></h1>
+  <a href="/profile/<%= currentUser.username %>" class="btn btn-secondary"><%= t('admin.backToProfile') %></a>
+</div>
+
+<p class="admin-users-intro"><%= t('admin.usersSubtitle') %></p>
+
+<% if (users.length === 0) { %>
+  <p class="search-empty"><%= t('admin.noUsers') %></p>
+<% } else { %>
+  <div class="admin-users-table-wrap">
+    <table class="admin-users-table">
+      <thead>
+        <tr>
+          <th><%= t('admin.colUser') %></th>
+          <th><%= t('admin.colJoined') %></th>
+          <th><%= t('admin.colRole') %></th>
+          <th><%= t('admin.colRecipes') %></th>
+          <th><%= t('admin.colActions') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <% const avatarSrc = user.profilePicture && (user.profilePicture.startsWith('http') || user.profilePicture.startsWith('/'))
+            ? user.profilePicture
+            : '/images/default-avatar.png'; %>
+          <% const isSelf = currentUser._id.toString() === user._id.toString(); %>
+          <tr>
+            <td>
+              <a href="/profile/<%= user.username %>" class="admin-user-link">
+                <img src="<%= avatarSrc %>" alt="<%= user.username %>" class="admin-user-avatar">
+                <span><%= user.username %></span>
+              </a>
+            </td>
+            <td><%= user.createdAt.toDateString() %></td>
+            <td>
+              <% if (user.isAdmin) { %>
+                <span class="admin-role-badge is-admin"><%= t('admin.roleAdmin') %></span>
+              <% } else { %>
+                <span class="admin-role-badge"><%= t('admin.roleUser') %></span>
+              <% } %>
+            </td>
+            <td><%= user.recipeCount %></td>
+            <td>
+              <% if (isSelf) { %>
+                <span class="admin-action-disabled"><%= t('admin.cannotChangeSelf') %></span>
+              <% } else { %>
+                <form action="/admin/users/<%= user._id %>/toggle-admin" method="POST" class="admin-toggle-form">
+                  <button type="submit" class="btn <%= user.isAdmin ? 'btn-secondary' : 'btn-primary' %> admin-toggle-btn">
+                    <%= user.isAdmin ? t('admin.removeAdmin') : t('admin.makeAdmin') %>
+                  </button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>
