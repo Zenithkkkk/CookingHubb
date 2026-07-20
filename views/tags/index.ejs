@@ -1,0 +1,404 @@
+<!-- header -->
+<%- include('../partials/header') %>
+
+<div class="tags-page" id="tags-page">
+  <section class="tags-panel" aria-label="<%= t('tags.panelLabel') %>">
+    <header class="tags-panel-header">
+      <h1 class="tags-panel-title">
+        <span class="tags-panel-title-text" id="tags-panel-title-text"><%= t('tags.selectHint') %></span>
+      </h1>
+      <button type="button" class="tags-query-btn ripple-btn" id="tags-query-btn" disabled>
+        <%= t('tags.query') %>
+      </button>
+    </header>
+
+    <div class="tags-panel-body">
+      <div class="tags-skeleton" id="tags-skeleton" aria-hidden="true">
+        <% for (let i = 0; i < 24; i++) { %>
+          <span class="skeleton skeleton-tag-pill"></span>
+        <% } %>
+      </div>
+      <div class="tags-chip-grid" id="tags-chip-grid" hidden></div>
+    </div>
+
+    <nav class="tags-pagination" id="tags-pagination" aria-label="<%= t('tags.paginationLabel') %>" hidden>
+      <button type="button" class="tags-page-btn" id="tags-prev-btn" disabled><%= t('tags.prevPage') %></button>
+      <span class="tags-page-info" id="tags-page-info"></span>
+      <button type="button" class="tags-page-btn" id="tags-next-btn" disabled><%= t('tags.nextPage') %></button>
+    </nav>
+  </section>
+
+  <section class="tags-results-panel" aria-label="<%= t('tags.resultsLabel') %>">
+    <div class="tags-results-skeleton" id="tags-results-skeleton" aria-hidden="true">
+      <% for (let i = 0; i < 6; i++) { %>
+        <article class="skeleton-recipe-card">
+          <div class="skeleton skeleton-recipe-image"></div>
+          <div class="skeleton-recipe-body">
+            <div class="skeleton skeleton-line skeleton-line-title"></div>
+            <div class="skeleton skeleton-line skeleton-line-short"></div>
+            <div class="skeleton skeleton-line skeleton-line-medium"></div>
+          </div>
+        </article>
+      <% } %>
+    </div>
+
+    <div class="tags-results-meta" id="tags-results-meta" hidden></div>
+    <div class="recipe-grid tags-results-grid" id="tags-results-grid" hidden></div>
+    <p class="tags-results-empty" id="tags-results-empty" hidden><%= t('tags.noResults') %></p>
+  </section>
+</div>
+
+<script id="tags-i18n" type="application/json"><%- JSON.stringify({
+  categoryLabel: t('recipes.categoryLabel'),
+  byLabel: t('recipes.byLabel'),
+  foundOne: t('recipes.foundOne'),
+  foundMany: t('recipes.foundMany'),
+  headerHint: t('tags.selectHint'),
+  headerSelected: t('tags.headerSelected'),
+  pageInfo: t('tags.pageInfo'),
+  selectAtLeastOne: t('tags.selectAtLeastOne'),
+  loadError: t('tags.loadError'),
+  searchError: t('tags.searchError')
+}) %></script>
+
+<script>
+(function () {
+  const i18n = JSON.parse(document.getElementById('tags-i18n').textContent);
+  const TAGS_PER_PAGE = 24;
+
+  const tagsSkeleton = document.getElementById('tags-skeleton');
+  const tagsChipGrid = document.getElementById('tags-chip-grid');
+  const tagsPagination = document.getElementById('tags-pagination');
+  const tagsPrevBtn = document.getElementById('tags-prev-btn');
+  const tagsNextBtn = document.getElementById('tags-next-btn');
+  const tagsPageInfo = document.getElementById('tags-page-info');
+  const tagsPanelTitleText = document.getElementById('tags-panel-title-text');
+  const queryBtn = document.getElementById('tags-query-btn');
+
+  const resultsSkeleton = document.getElementById('tags-results-skeleton');
+  const resultsMeta = document.getElementById('tags-results-meta');
+  const resultsGrid = document.getElementById('tags-results-grid');
+  const resultsEmpty = document.getElementById('tags-results-empty');
+
+  let tagPages = [];
+  let totalTagCount = 0;
+  let currentPage = 1;
+  let totalPages = 1;
+  let selectedTags = new Set();
+  let suppressSelectedTitle = false;
+  let headerTransitionTimer = null;
+
+  function formatCount(count) {
+    const template = count === 1 ? i18n.foundOne : i18n.foundMany;
+    return template.replace(/\{\{count\}\}/g, String(count));
+  }
+
+  function getHeaderTitleText() {
+    if (selectedTags.size > 0 && !suppressSelectedTitle) {
+      return i18n.headerSelected.replace(/\{\{count\}\}/g, String(selectedTags.size));
+    }
+    return i18n.headerHint;
+  }
+
+  function updateHeaderTitle() {
+    const nextText = getHeaderTitleText();
+    if (!tagsPanelTitleText || tagsPanelTitleText.textContent === nextText) return;
+
+    clearTimeout(headerTransitionTimer);
+    tagsPanelTitleText.classList.add('is-leaving');
+
+    headerTransitionTimer = setTimeout(() => {
+      tagsPanelTitleText.textContent = nextText;
+      tagsPanelTitleText.classList.remove('is-leaving');
+      tagsPanelTitleText.classList.add('is-entering');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          tagsPanelTitleText.classList.remove('is-entering');
+        });
+      });
+    }, 180);
+  }
+
+  function shuffleArray(items) {
+    const array = items.slice();
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
+  function buildTagPages(tagsWithCounts) {
+    const shuffled = shuffleArray(tagsWithCounts);
+    const pages = [];
+
+    for (let i = 0; i < shuffled.length; i += TAGS_PER_PAGE) {
+      const slice = shuffled.slice(i, i + TAGS_PER_PAGE);
+      slice.sort((a, b) => {
+        if (b.recipeCount !== a.recipeCount) return b.recipeCount - a.recipeCount;
+        return a.name.localeCompare(b.name);
+      });
+      pages.push(slice.map((item) => item.name));
+    }
+
+    return pages.length ? pages : [[]];
+  }
+
+  function normalizeTags(rawTags) {
+    return (rawTags || []).map((item) => {
+      if (typeof item === 'string') {
+        return { name: item, recipeCount: 0 };
+      }
+      return {
+        name: item.name,
+        recipeCount: item.recipeCount || 0
+      };
+    }).filter((item) => item.name);
+  }
+
+  function syncSkeletonCount(count) {
+    tagsSkeleton.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const pill = document.createElement('span');
+      pill.className = 'skeleton skeleton-tag-pill';
+      tagsSkeleton.appendChild(pill);
+    }
+  }
+
+  function setupRipple(button) {
+    button.addEventListener('click', function (event) {
+      const rect = button.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      const size = Math.max(rect.width, rect.height) * 1.6;
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
+      button.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  }
+
+  function updateQueryButton() {
+    queryBtn.disabled = selectedTags.size === 0;
+    updateHeaderTitle();
+  }
+
+  function renderTagChips(tags) {
+    tagsChipGrid.innerHTML = '';
+    tags.forEach((tag) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tag-chip' + (selectedTags.has(tag) ? ' tag-chip-selected' : '');
+      btn.textContent = tag;
+      btn.title = tag;
+      btn.dataset.tag = tag;
+      btn.addEventListener('click', () => {
+        suppressSelectedTitle = false;
+        if (selectedTags.has(tag)) {
+          selectedTags.delete(tag);
+          btn.classList.remove('tag-chip-selected');
+        } else {
+          selectedTags.add(tag);
+          btn.classList.add('tag-chip-selected');
+        }
+        updateQueryButton();
+      });
+      tagsChipGrid.appendChild(btn);
+    });
+  }
+
+  function updatePagination(page, pages, total, pageCount) {
+    currentPage = page;
+    totalPages = pages;
+    tagsPageInfo.textContent = i18n.pageInfo
+      .replace('{page}', page)
+      .replace('{totalPages}', pages)
+      .replace('{totalTags}', total)
+      .replace('{pageCount}', pageCount);
+    tagsPrevBtn.disabled = page <= 1;
+    tagsNextBtn.disabled = page >= pages;
+  }
+
+  function showTagsLoading(pageTagCount) {
+    syncSkeletonCount(pageTagCount || TAGS_PER_PAGE);
+    tagsSkeleton.hidden = false;
+    tagsChipGrid.hidden = true;
+    tagsPagination.hidden = true;
+  }
+
+  function showTagsContent() {
+    tagsSkeleton.hidden = true;
+    tagsChipGrid.hidden = false;
+    tagsPagination.hidden = false;
+  }
+
+  function renderCurrentPage() {
+    if (!tagPages.length) {
+      tagsChipGrid.innerHTML = '<p class="tags-error">' + i18n.loadError + '</p>';
+      tagsChipGrid.hidden = false;
+      tagsPagination.hidden = true;
+      return;
+    }
+
+    totalPages = tagPages.length;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const pageTags = tagPages[currentPage - 1] || [];
+    renderTagChips(pageTags);
+    updatePagination(currentPage, totalPages, totalTagCount, pageTags.length);
+    showTagsContent();
+  }
+
+  async function loadTags(page) {
+    if (page) currentPage = page;
+    const pageTagCount = tagPages.length
+      ? (tagPages[currentPage - 1] || []).length
+      : TAGS_PER_PAGE;
+    showTagsLoading(pageTagCount);
+
+    try {
+      if (!tagPages.length) {
+        const res = await fetch('/tags/api/list');
+        if (!res.ok) throw new Error('load failed');
+        const data = await res.json();
+        const normalized = normalizeTags(data.tags);
+        totalTagCount = normalized.length;
+        tagPages = buildTagPages(normalized);
+      }
+
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      renderCurrentPage();
+    } catch (_) {
+      tagsSkeleton.hidden = true;
+      tagsChipGrid.innerHTML = '<p class="tags-error">' + i18n.loadError + '</p>';
+      tagsChipGrid.hidden = false;
+      tagsPagination.hidden = true;
+    }
+  }
+
+  function categoryLabel(category) {
+    const map = {
+      Breakfast: '<%= t("categories.Breakfast") %>',
+      Lunch: '<%= t("categories.Lunch") %>',
+      Dinner: '<%= t("categories.Dinner") %>',
+      Dessert: '<%= t("categories.Dessert") %>',
+      Snack: '<%= t("categories.Snack") %>',
+      Drink: '<%= t("categories.Drink") %>'
+    };
+    return map[category] || category;
+  }
+
+  function renderRecipeCard(recipe) {
+    const tagsHtml = (recipe.tags || []).map((tag) =>
+      '<span class="recipe-tag">#' + escapeHtml(tag) + '</span>'
+    ).join('');
+
+    return (
+      '<article class="recipe-card">' +
+        '<a href="/recipes/' + encodeURIComponent(recipe.slug) + '" class="recipe-card-link" aria-label="' + escapeHtml(recipe.title) + '"></a>' +
+        '<img src="' + escapeHtml(recipe.image) + '" alt="' + escapeHtml(recipe.title) + '">' +
+        '<div class="recipe-card-body">' +
+          '<h2>' + escapeHtml(recipe.title) + '</h2>' +
+          '<p>' + escapeHtml(i18n.categoryLabel) + ' ' + escapeHtml(categoryLabel(recipe.category)) + '</p>' +
+          (tagsHtml ? '<p class="recipe-card-tags">' + tagsHtml + '</p>' : '') +
+          '<p>' + escapeHtml(i18n.byLabel) + ' <a href="/profile/' + encodeURIComponent(recipe.author.username) + '" class="recipe-card-author">' + escapeHtml(recipe.author.username) + '</a></p>' +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showResultsLoading() {
+    resultsSkeleton.hidden = false;
+    resultsMeta.hidden = true;
+    resultsGrid.hidden = true;
+    resultsEmpty.hidden = true;
+  }
+
+  function renderRecipes(recipes, { showCount = false } = {}) {
+    const recipeCount = recipes.length;
+
+    if (!recipeCount) {
+      resultsSkeleton.hidden = true;
+      resultsMeta.hidden = true;
+      resultsGrid.hidden = true;
+      resultsEmpty.hidden = false;
+      return;
+    }
+
+    resultsSkeleton.hidden = true;
+    if (showCount) {
+      resultsMeta.textContent = formatCount(recipeCount);
+      resultsMeta.hidden = false;
+    } else {
+      resultsMeta.hidden = true;
+      resultsMeta.textContent = '';
+    }
+    resultsGrid.innerHTML = recipes.map(renderRecipeCard).join('');
+    resultsGrid.hidden = false;
+    resultsEmpty.hidden = true;
+  }
+
+  async function loadAllRecipes() {
+    showResultsLoading();
+    try {
+      const res = await fetch('/tags/api/recipes');
+      if (!res.ok) throw new Error('load failed');
+      const data = await res.json();
+      renderRecipes(data.recipes || [], { showCount: false });
+    } catch (_) {
+      resultsSkeleton.hidden = true;
+      resultsEmpty.hidden = false;
+      resultsEmpty.textContent = i18n.searchError;
+    }
+  }
+
+  async function searchRecipes() {
+    if (selectedTags.size === 0) return;
+
+    showResultsLoading();
+    const tagsParam = Array.from(selectedTags).map(encodeURIComponent).join(',');
+
+    try {
+      const res = await fetch('/tags/api/search?tags=' + tagsParam);
+      if (!res.ok) throw new Error('search failed');
+      const data = await res.json();
+
+      suppressSelectedTitle = true;
+      updateHeaderTitle();
+      renderRecipes(data.recipes || [], { showCount: true });
+    } catch (_) {
+      resultsSkeleton.hidden = true;
+      resultsEmpty.hidden = false;
+      resultsEmpty.textContent = i18n.searchError;
+    }
+  }
+
+  tagsPrevBtn.addEventListener('click', () => {
+    if (currentPage > 1) loadTags(currentPage - 1);
+  });
+
+  tagsNextBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) loadTags(currentPage + 1);
+  });
+
+  queryBtn.addEventListener('click', searchRecipes);
+  setupRipple(queryBtn);
+
+  loadTags(1);
+  loadAllRecipes();
+})();
+</script>
+
+<!-- footer -->
+<%- include('../partials/footer') %>

@@ -12,7 +12,8 @@ const TRANSLATIONS = {
       logout: 'Logout',
       contactUs: 'Contact Us',
       leaderboard: 'Leaderboard',
-      myFridge: 'My Fridge'
+      myFridge: 'My Fridge',
+      tags: 'Tags'
     },
     common: {
       search: 'Search',
@@ -58,9 +59,9 @@ const TRANSLATIONS = {
       allRecipes: 'All Recipes',
       addRecipe: '+ Add Recipe',
       searchLabel: 'Search',
-      qPlaceholder: 'e.g. Tuna (matches title, description, tags)',
+      qPlaceholder: 'e.g. chicken (matches title/description)',
       tagLabel: 'Tag',
-      tagPlaceholder: 'e.g. vegan, quick',
+      tagPlaceholder: 'eg.vegan',
       stapleLabel: 'Staple Food',
       mealCategoryLabel: 'Meal Category',
       categoryLabel: 'Category:',
@@ -99,6 +100,22 @@ const TRANSLATIONS = {
       colRecipes: 'Contributed Recipes',
       recipeCount: '{{count}}',
       expandMore: 'View more'
+    },
+    tags: {
+      title: 'Tags',
+      query: 'Search',
+      selectHint: 'Select tags and click Search',
+      headerSelected: 'Selected {{count}} tags',
+      selectAtLeastOne: 'Please select at least one tag',
+      noResults: 'No recipes match the selected tags.',
+      prevPage: 'Previous',
+      nextPage: 'Next',
+      pageInfo: 'Page {page} / {totalPages} ({pageCount} on this page, {totalTags} total)',
+      panelLabel: 'Tag selection area',
+      resultsLabel: 'Search results',
+      paginationLabel: 'Tag pagination',
+      loadError: 'Failed to load tags. Please refresh the page.',
+      searchError: 'Search failed. Please try again.'
     },
     like: {
       like: 'Like',
@@ -294,7 +311,8 @@ const TRANSLATIONS = {
       logout: 'Abmelden',
       contactUs: 'Kontakt',
       leaderboard: 'Rangliste',
-      myFridge: 'Mein Kühlschrank'
+      myFridge: 'Mein Kühlschrank',
+      tags: 'Tags'
     },
     common: {
       search: 'Suche',
@@ -340,9 +358,9 @@ const TRANSLATIONS = {
       allRecipes: 'Alle Rezepte',
       addRecipe: '+ Rezept hinzufügen',
       searchLabel: 'Suche',
-      qPlaceholder: 'z.B. Tuna (passt zu Titel, Beschreibung, Tags)',
+      qPlaceholder: 'z.B. Hähnchen (passt zu Titel/Beschreibung)',
       tagLabel: 'Tag',
-      tagPlaceholder: 'z.B. vegan, schnell',
+      tagPlaceholder: 'z.B.vegan',
       stapleLabel: 'Beilage',
       mealCategoryLabel: 'Kategorie',
       categoryLabel: 'Kategorie:',
@@ -381,6 +399,22 @@ const TRANSLATIONS = {
       colRecipes: 'Beigetragene Rezepte',
       recipeCount: '{{count}}',
       expandMore: 'Mehr anzeigen'
+    },
+    tags: {
+      title: 'Tags',
+      query: 'Suchen',
+      selectHint: 'Tags auswählen und auf Suchen klicken',
+      headerSelected: '{{count}} Tags ausgewählt',
+      selectAtLeastOne: 'Bitte mindestens ein Tag auswählen',
+      noResults: 'Keine Rezepte für die ausgewählten Tags gefunden.',
+      prevPage: 'Zurück',
+      nextPage: 'Weiter',
+      pageInfo: 'Seite {page} / {totalPages} ({pageCount} auf dieser Seite, {totalTags} gesamt)',
+      panelLabel: 'Tag-Auswahlbereich',
+      resultsLabel: 'Suchergebnisse',
+      paginationLabel: 'Tag-Seitennummerierung',
+      loadError: 'Tags konnten nicht geladen werden. Bitte Seite neu laden.',
+      searchError: 'Suche fehlgeschlagen. Bitte erneut versuchen.'
     },
     like: {
       like: 'Gefällt mir',
@@ -575,7 +609,8 @@ const TRANSLATIONS = {
       logout: 'Cerrar sesión',
       contactUs: 'Contáctanos',
       leaderboard: 'Ranking',
-      myFridge: 'Mi nevera'
+      myFridge: 'Mi nevera',
+      tags: 'Etiquetas'
     },
     common: {
       search: 'Buscar',
@@ -621,9 +656,9 @@ const TRANSLATIONS = {
       allRecipes: 'Todas las recetas',
       addRecipe: '+ Agregar receta',
       searchLabel: 'Buscar',
-      qPlaceholder: 'p. ej. Tuna (coincide con título, descripción, etiquetas)',
+      qPlaceholder: 'p.ej. pollo (coincide con título/descripción)',
       tagLabel: 'Etiqueta',
-      tagPlaceholder: 'p. ej. vegano, rápido',
+      tagPlaceholder: 'p.ej.vegan',
       stapleLabel: 'Ingrediente principal',
       mealCategoryLabel: 'Categoría',
       categoryLabel: 'Categoría:',
@@ -662,6 +697,22 @@ const TRANSLATIONS = {
       colRecipes: 'Recetas aportadas',
       recipeCount: '{{count}}',
       expandMore: 'Ver más'
+    },
+    tags: {
+      title: 'Etiquetas',
+      query: 'Buscar',
+      selectHint: 'Selecciona etiquetas y haz clic en Buscar',
+      headerSelected: '{{count}} etiquetas seleccionadas',
+      selectAtLeastOne: 'Selecciona al menos una etiqueta',
+      noResults: 'No hay recetas que coincidan con las etiquetas seleccionadas.',
+      prevPage: 'Anterior',
+      nextPage: 'Siguiente',
+      pageInfo: 'Página {page} / {totalPages} ({pageCount} en esta página, {totalTags} en total)',
+      panelLabel: 'Área de selección de etiquetas',
+      resultsLabel: 'Resultados de búsqueda',
+      paginationLabel: 'Paginación de etiquetas',
+      loadError: 'No se pudieron cargar las etiquetas. Actualiza la página.',
+      searchError: 'Error en la búsqueda. Inténtalo de nuevo.'
     },
     like: {
       like: 'Me gusta',
@@ -856,7 +907,8 @@ const TRANSLATIONS = {
       logout: '退出登录',
       contactUs: '联系我们',
       leaderboard: '排行榜',
-      myFridge: '我的冰箱'
+      myFridge: '我的冰箱',
+      tags: '标签分类'
     },
     common: {
       search: '搜索',
@@ -902,9 +954,9 @@ const TRANSLATIONS = {
       allRecipes: '全部食谱',
       addRecipe: '+ 添加食谱',
       searchLabel: '搜索',
-      qPlaceholder: '例如：金枪鱼（匹配标题/描述/标签）',
+      qPlaceholder: '例如:鸡肉(匹配标题/描述)',
       tagLabel: '标签',
-      tagPlaceholder: '例如：素食，快速',
+      tagPlaceholder: '例如:vegan',
       stapleLabel: '主食',
       mealCategoryLabel: '餐类',
       categoryLabel: '类别：',
@@ -943,6 +995,22 @@ const TRANSLATIONS = {
       colRecipes: '贡献食谱',
       recipeCount: '{{count}}',
       expandMore: '展开更多'
+    },
+    tags: {
+      title: '标签',
+      query: '查询',
+      selectHint: '请选择标签并点击查询',
+      headerSelected: '已选择{{count}}个标签',
+      selectAtLeastOne: '请至少选择一个标签',
+      noResults: '没有匹配所选标签的食谱。',
+      prevPage: '上一页',
+      nextPage: '下一页',
+      pageInfo: '第 {page} / {totalPages} 页（本页 {pageCount} 个，共 {totalTags} 个标签）',
+      panelLabel: '标签选择区',
+      resultsLabel: '查询结果',
+      paginationLabel: '标签分页',
+      loadError: '标签加载失败，请刷新页面重试。',
+      searchError: '查询失败，请稍后重试。'
     },
     like: {
       like: '喜欢',

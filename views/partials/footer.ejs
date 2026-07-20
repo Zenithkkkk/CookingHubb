@@ -1,7 +1,42 @@
 </main>
+
+<div class="lang-switch-skeleton" id="lang-switch-skeleton" hidden aria-hidden="true">
+  <div class="lang-switch-skeleton-inner">
+    <div class="skeleton skeleton-line skeleton-line-title lang-skel-title"></div>
+    <div class="skeleton skeleton-line skeleton-line-medium lang-skel-sub"></div>
+    <div class="tags-results-skeleton lang-skel-grid">
+      <% for (let i = 0; i < 6; i++) { %>
+        <article class="skeleton-recipe-card">
+          <div class="skeleton skeleton-recipe-image"></div>
+          <div class="skeleton-recipe-body">
+            <div class="skeleton skeleton-line skeleton-line-title"></div>
+            <div class="skeleton skeleton-line skeleton-line-short"></div>
+            <div class="skeleton skeleton-line skeleton-line-medium"></div>
+          </div>
+        </article>
+      <% } %>
+    </div>
+  </div>
+</div>
+
 <footer>
   <p><%- t('footer.copy') %></p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+(function () {
+  var select = document.getElementById('lang-select');
+  var skeleton = document.getElementById('lang-switch-skeleton');
+  var main = document.querySelector('main');
+  if (select && skeleton) {
+    select.addEventListener('change', function () {
+      if (main) main.hidden = true;
+      skeleton.hidden = false;
+      window.location.href = '/language?lang=' + encodeURIComponent(select.value)
+        + '&next=' + encodeURIComponent(window.location.pathname + window.location.search);
+    });
+  }
+})();
+</script>
 </body>
 </html>

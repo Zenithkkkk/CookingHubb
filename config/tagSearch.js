@@ -7,10 +7,10 @@ const TAG_SYNONYM_GROUPS = [
   ['cantonese', '广式', 'cantonesisch', 'cantonés', '粤菜', 'guangdong', '广东'],
   ['chinese', '中式', '中国菜', 'chinesisch', 'chino', 'china'],
   ['traditional', '传统', 'traditionell', 'tradicional'],
-  ['chicken', '鸡', '鸡肉', 'hähnchen', 'pollo'],
+  ['chicken', '鸡', '鸡肉', '鸡腿', 'hähnchen', 'pollo'],
   ['seafood', '海鲜', 'meeresfrüchte', 'mariscos', 'sea food'],
   ['vegetarian', '素食', 'vegetarisch', 'vegetariano'],
-  ['vegan', '纯素', 'vegano'],
+  ['vegan', '纯素', '纯素食', 'vegano', 'vegan food'],
   ['quick', '快速', '快手', 'schnell', 'rápido', 'quick meal'],
   ['healthy', '健康', 'gesund', 'saludable'],
   ['spicy', '辣', '辛辣', 'scharf', 'picante', 'hot'],
@@ -126,11 +126,33 @@ async function buildTagFilterConditionAsync(tag) {
   return buildTagFilterConditionFromTerms(terms);
 }
 
+function buildQueryFilterConditionFromTerms(terms) {
+  if (!terms.length) return null;
+
+  const matchers = terms.flatMap((term) => {
+    const regex = { $regex: escapeRegex(term), $options: 'i' };
+    return [
+      { title: regex },
+      { description: regex },
+      { tags: regex },
+      { tagsSearchTerms: regex }
+    ];
+  });
+
+  return matchers.length === 1 ? matchers[0] : { $or: matchers };
+}
+
+async function buildQueryFilterConditionAsync(query) {
+  const terms = await expandTagSearchTerms(query);
+  return buildQueryFilterConditionFromTerms(terms);
+}
+
 module.exports = {
   TAG_SYNONYM_GROUPS,
   getTagSearchTerms,
   buildTagsSearchTerms,
   expandTagSearchTerms,
   buildTagFilterCondition,
-  buildTagFilterConditionAsync
+  buildTagFilterConditionAsync,
+  buildQueryFilterConditionAsync
 };

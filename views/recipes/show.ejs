@@ -1,7 +1,7 @@
 <!-- header -->
 <%- include('../partials/header') %>
 
-<article class="recipe-detail">
+<article class="recipe-detail recipe-slide-in">
   <div class="recipe-detail-image-wrap">
     <img class="recipe-detail-image" src="<%= (recipe.image.startsWith('http') || recipe.image.startsWith('/')) ? recipe.image : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
   </div>

@@ -8,7 +8,8 @@ const {
   buildStapleFilterCondition,
   stapleMatchesTitle
 } = require('../config/stapleSearch');
-const { buildTagFilterConditionAsync, buildTagsSearchTerms } = require('../config/tagSearch');
+const { buildTagFilterConditionAsync, buildTagsSearchTerms, buildQueryFilterConditionAsync } = require('../config/tagSearch');
+const { syncAllTagsFromRecipes } = require('../config/tagSync');
 const { translateText } = require('../config/translate');
 const { extractIngredientsFromDescription } = require('../config/extractIngredients');
 const { buildCommentTree } = require('./commentController');
@@ -155,6 +156,7 @@ exports.createRecipe = async (req, res) => {
     });
 
     await recipe.save();
+    await syncAllTagsFromRecipes();
     res.redirect(`/recipes/${recipe.slug}`);
   } catch (err) {
     console.error(err);
@@ -294,14 +296,8 @@ exports.getAllRecipes = async (req, res) => {
       const conditions = [];
 
       if (q && q.trim()) {
-        const regex = new RegExp(escapeRegex(q.trim()), 'i');
-        conditions.push({
-          $or: [
-            { title: regex },
-            { description: regex },
-            { tags: regex }
-          ]
-        });
+        const queryCondition = await buildQueryFilterConditionAsync(q);
+        if (queryCondition) conditions.push(queryCondition);
       }
 
       if (staple && staple.trim()) {
@@ -574,6 +570,7 @@ exports.getEditRecipeForm = async (req, res) => {
       }
   
       await recipe.save();
+      await syncAllTagsFromRecipes();
       res.redirect(`/recipes/${recipe.slug}`);
     } catch (err) {
       console.error(err);
@@ -592,6 +589,7 @@ exports.getEditRecipeForm = async (req, res) => {
       }
   
       await Recipe.deleteOne({ _id: recipe._id });
+      await syncAllTagsFromRecipes();
       res.redirect('/recipes');
     } catch (err) {
       console.error(err);

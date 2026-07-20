@@ -61,6 +61,14 @@ mongoose.connect(process.env.MONGO_URI)
     } catch (e) {
       console.error('Error ensuring admin user:', e);
     }
+
+    try {
+      const { syncAllTagsFromRecipes } = require('./config/tagSync');
+      const tagCount = await syncAllTagsFromRecipes();
+      console.log(`Tag registry synced: ${tagCount} tags`);
+    } catch (e) {
+      console.error('Error syncing tags:', e);
+    }
   })
   .catch(err => console.log(err));
 
@@ -104,6 +112,7 @@ app.use('/', require('./routes/languageRoutes'));
 app.use('/recipes', require('./routes/recipeRoutes')); // mount routes under /recipe
 app.use('/profile', require('./routes/profileRoutes'));
 app.use('/fridge', require('./routes/fridgeRoutes'));
+app.use('/tags', require('./routes/tagRoutes'));
 app.use('/admin', require('./routes/adminRoutes'));
 app.use('/', require('./routes/contactRoutes'));
 

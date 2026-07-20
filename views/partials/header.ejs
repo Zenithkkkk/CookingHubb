@@ -15,27 +15,23 @@
     <div class="nav-center-links">
       <a href="/recipes/leaderboard"><%= t('nav.leaderboard') %></a>
       <a href="/fridge"><%= t('nav.myFridge') %></a>
+      <a href="/tags"><%= t('nav.tags') %></a>
       <a href="/recipes"><%= t('nav.recipes') %></a>
       <% if (currentUser) { %>
         <a href="/recipes/liked"><%= t('nav.likedRecipes') %></a>
         <a href="/profile/<%= currentUser.username %>"><%= t('nav.myProfile') %></a>
       <% } %>
-      <div class="nav-center-lang">
-        <span class="nav-center-emojis"></span>
-        <div class="lang-switch">
-          <select
-            class="lang-select"
-            aria-label="Select language"
-            onchange="window.location.href='/language?lang='+this.value+'&next='+encodeURIComponent(window.location.pathname + window.location.search)"
-          >
-            <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Germany</option>
-            <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Spanish</option>
-            <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>Chinese</option>
-            <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
-          </select>
-        </div>
-        <a href="/contact" class="nav-contact-btn"><%= t('nav.contactUs') %></a>
-      </div>
+      <select
+        class="lang-select"
+        id="lang-select"
+        aria-label="Select language"
+      >
+        <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Germany</option>
+        <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Spanish</option>
+        <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>Chinese</option>
+        <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+      </select>
+      <a href="/contact" class="nav-contact-btn"><%= t('nav.contactUs') %></a>
     </div>
     <div class="nav-actions">
       <% if (currentUser) { %>

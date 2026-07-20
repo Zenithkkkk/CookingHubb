@@ -61,40 +61,80 @@
 </form>
 
 <% if (recipes.length === 0) { %>
-  <p class="search-empty">
-    <% if (hasActiveSearch) { %>
-      <%= t('recipes.noRecipesMatch') %>
-    <% } else { %>
-      <%= t('recipes.noRecipesYet') %>
-    <% } %>
-  </p>
-<% } else { %>
-  <% if (hasActiveSearch) { %>
-    <p class="search-results-count">
-      <%= recipes.length === 1 ? t('recipes.foundOne', { count: recipes.length }) : t('recipes.foundMany', { count: recipes.length }) %>
+  <div id="recipes-results">
+    <p class="search-empty">
+      <% if (hasActiveSearch) { %>
+        <%= t('recipes.noRecipesMatch') %>
+      <% } else { %>
+        <%= t('recipes.noRecipesYet') %>
+      <% } %>
     </p>
-  <% } %>
-  <div class="recipe-grid">
-    <% recipes.forEach(recipe => { %>
-      <article class="recipe-card">
-        <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
-        <img src="<%= ((recipe.imageThumb || recipe.image).startsWith('http') || (recipe.imageThumb || recipe.image).startsWith('/')) ? (recipe.imageThumb || recipe.image) : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
-        <div class="recipe-card-body">
-          <h2><%= recipe.title %></h2>
-          <p><%= t('recipes.categoryLabel') %> <%= t('categories.' + recipe.category) || recipe.category %></p>
-          <% if (recipe.tags.length > 0) { %>
-            <p class="recipe-card-tags">
-              <% recipe.tags.forEach(tag => { %>
-                <a href="/recipes?tag=<%= encodeURIComponent(tag) %>" class="recipe-tag">#<%= tag %></a>
-              <% }) %>
-            </p>
-          <% } %>
-          <p><%= t('recipes.byLabel') %> <a href="/profile/<%= recipe.author.username %>" class="recipe-card-author"><%= recipe.author.username %></a></p>
-        </div>
-      </article>
-    <% }) %>
+  </div>
+<% } else { %>
+  <div id="recipes-results">
+    <% if (hasActiveSearch) { %>
+      <p class="search-results-count">
+        <%= recipes.length === 1 ? t('recipes.foundOne', { count: recipes.length }) : t('recipes.foundMany', { count: recipes.length }) %>
+      </p>
+    <% } %>
+    <div class="recipe-grid">
+      <% recipes.forEach(recipe => { %>
+        <article class="recipe-card">
+          <a href="/recipes/<%= recipe.slug %>" class="recipe-card-link" aria-label="View <%= recipe.title %>"></a>
+          <img src="<%= ((recipe.imageThumb || recipe.image).startsWith('http') || (recipe.imageThumb || recipe.image).startsWith('/')) ? (recipe.imageThumb || recipe.image) : '/images/default-recipe.png' %>" alt="<%= recipe.title %>">
+          <div class="recipe-card-body">
+            <h2><%= recipe.title %></h2>
+            <p><%= t('recipes.categoryLabel') %> <%= t('categories.' + recipe.category) || recipe.category %></p>
+            <% if (recipe.tags.length > 0) { %>
+              <p class="recipe-card-tags">
+                <% recipe.tags.forEach(tag => { %>
+                  <a href="/recipes?tag=<%= encodeURIComponent(tag) %>" class="recipe-tag">#<%= tag %></a>
+                <% }) %>
+              </p>
+            <% } %>
+            <p><%= t('recipes.byLabel') %> <a href="/profile/<%= recipe.author.username %>" class="recipe-card-author"><%= recipe.author.username %></a></p>
+          </div>
+        </article>
+      <% }) %>
+    </div>
   </div>
 <% } %>
+
+<div class="recipes-search-skeleton" id="recipes-search-skeleton" hidden aria-hidden="true">
+  <div class="tags-results-skeleton">
+    <% for (let i = 0; i < 6; i++) { %>
+      <article class="skeleton-recipe-card">
+        <div class="skeleton skeleton-recipe-image"></div>
+        <div class="skeleton-recipe-body">
+          <div class="skeleton skeleton-line skeleton-line-title"></div>
+          <div class="skeleton skeleton-line skeleton-line-short"></div>
+          <div class="skeleton skeleton-line skeleton-line-medium"></div>
+        </div>
+      </article>
+    <% } %>
+  </div>
+</div>
+
+<script>
+(function () {
+  const form = document.querySelector('.search-bar');
+  const results = document.getElementById('recipes-results');
+  const skeleton = document.getElementById('recipes-search-skeleton');
+  if (!form || !skeleton) return;
+
+  form.addEventListener('submit', function () {
+    if (results) results.hidden = true;
+    skeleton.hidden = false;
+  });
+
+  document.querySelectorAll('a.recipe-tag[href*="tag="]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (results) results.hidden = true;
+      skeleton.hidden = false;
+    });
+  });
+})();
+</script>
 
 <!-- footer -->
 <%- include('../partials/footer') %>
