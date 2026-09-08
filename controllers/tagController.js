@@ -77,7 +77,7 @@ exports.searchByTags = async (req, res) => {
 
     const filter = validConditions.length === 1
       ? validConditions[0]
-      : { $and: validConditions };
+      : { $or: validConditions };
 
     const recipes = await Recipe.find(filter)
       .populate('author')

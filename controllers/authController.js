@@ -118,6 +118,12 @@ function renderRegister(res, data = {}) {
   });
 }
 
+function sanitizeNext(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  if (!raw.startsWith('/') || raw.startsWith('//')) return '';
+  return raw;
+}
+
 function isValidPhoneLength(countryCode, phoneDigits) {
   const allowedLengths = PHONE_LENGTH_RULES[countryCode];
   if (!allowedLengths) {
@@ -128,7 +134,9 @@ function isValidPhoneLength(countryCode, phoneDigits) {
 
 exports.getRegister = (req, res) => {
     // handles GET request to /register (renders reg form)
-    renderRegister(res, { phoneCountryCode: '+86' });
+    const next = sanitizeNext(req.query.next);
+    if (next) req.session.authNext = next;
+    renderRegister(res, { phoneCountryCode: '+86', next: next || '' });
   };
 
 exports.postRegister = async (req, res, next) => {
@@ -139,7 +147,8 @@ exports.postRegister = async (req, res, next) => {
       username,
       email: typeof email === 'string' ? email.trim() : '',
       phoneCountryCode: typeof phoneCountryCode === 'string' ? phoneCountryCode.trim() : '+86',
-      phoneNumber: typeof phoneNumber === 'string' ? phoneNumber.trim() : ''
+      phoneNumber: typeof phoneNumber === 'string' ? phoneNumber.trim() : '',
+      next: sanitizeNext(req.body.next) || ''
     };
 
     try {
@@ -230,11 +239,13 @@ exports.postRegister = async (req, res, next) => {
     }
 
     const user = await User.create(userPayload);
+    const redirectTo = sanitizeNext(req.body.next) || sanitizeNext(req.session.authNext) || '/recipes';
     
       req.login(user, (err) => {
         // provided by password, logs user in immediately after registration & redirects to /recipes
         if (err) return next(err);
-        res.redirect('/recipes');
+        delete req.session.authNext;
+        res.redirect(redirectTo);
       });
 
     } catch (err) {
@@ -259,13 +270,16 @@ exports.postRegister = async (req, res, next) => {
 
   exports.getLogin = (req, res) => {
     // render login form on a GET request to /login
-    res.render('auth/login');
+    const next = sanitizeNext(req.query.next);
+    if (next) req.session.authNext = next;
+    res.render('auth/login', { next: next || '' });
   };
 
   exports.postLogin = (req, res, next) => {
     // Use passport-local strategy but render login with an error message
     // (and keep user inputs) when credentials are invalid.
     const { credential, password } = req.body;
+    const redirectTo = sanitizeNext(req.body.next) || sanitizeNext(req.session.authNext) || '/recipes';
 
     passport.authenticate('local', { failureFlash: false }, (err, user, info) => {
       if (err) return next(err);
@@ -279,12 +293,18 @@ exports.postRegister = async (req, res, next) => {
         } else if (message === 'Incorrect password') {
           errorKey = 'auth.incorrectPassword';
         }
-        return res.status(401).render('auth/login', { errorKey, credential, password });
+        return res.status(401).render('auth/login', {
+          errorKey,
+          credential,
+          password,
+          next: sanitizeNext(req.body.next) || ''
+        });
       }
 
       return req.logIn(user, (err2) => {
         if (err2) return next(err2);
-        return res.redirect('/recipes');
+        delete req.session.authNext;
+        return res.redirect(redirectTo);
       });
     })(req, res, next);
   };

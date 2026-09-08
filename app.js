@@ -102,11 +102,12 @@ app.use((req, res, next) => { // this func runs on every request before the rout
   res.locals.currentUser = req.user || null; // req.user set by passport when smn logs in, with .currentUser every EJS template automatically has access to logged-in user
   res.locals.lang = normalizeLang(req.session.lang);
   res.locals.t = (key, params) => translate(res.locals.lang, key, params);
+  res.locals.isHomePage = false;
   next();
 });
 
-// routes 
-app.get('/', (req, res) => res.redirect('/recipes'));
+// routes
+app.get('/', require('./controllers/homeController').getHome);
 app.use('/', require('./routes/authRoutes')); //any route defined here is mounted at /routes/..
 app.use('/', require('./routes/languageRoutes'));
 app.use('/recipes', require('./routes/recipeRoutes')); // mount routes under /recipe

@@ -42,7 +42,10 @@
       <% } %>
     </div>
 
-    <div class="tags-results-meta" id="tags-results-meta" hidden></div>
+    <div class="tags-results-meta" id="tags-results-meta" hidden>
+      <p class="tags-results-hint" id="tags-results-hint" hidden></p>
+      <p class="tags-results-count" id="tags-results-count" hidden></p>
+    </div>
     <div class="recipe-grid tags-results-grid" id="tags-results-grid" hidden></div>
     <p class="tags-results-empty" id="tags-results-empty" hidden><%= t('tags.noResults') %></p>
   </section>
@@ -55,6 +58,7 @@
   foundMany: t('recipes.foundMany'),
   headerHint: t('tags.selectHint'),
   headerSelected: t('tags.headerSelected'),
+  matchAnyHint: t('tags.matchAnyHint'),
   pageInfo: t('tags.pageInfo'),
   selectAtLeastOne: t('tags.selectAtLeastOne'),
   loadError: t('tags.loadError'),
@@ -77,6 +81,8 @@
 
   const resultsSkeleton = document.getElementById('tags-results-skeleton');
   const resultsMeta = document.getElementById('tags-results-meta');
+  const resultsHint = document.getElementById('tags-results-hint');
+  const resultsCount = document.getElementById('tags-results-count');
   const resultsGrid = document.getElementById('tags-results-grid');
   const resultsEmpty = document.getElementById('tags-results-empty');
 
@@ -321,6 +327,8 @@
   function showResultsLoading() {
     resultsSkeleton.hidden = false;
     resultsMeta.hidden = true;
+    resultsHint.hidden = true;
+    resultsCount.hidden = true;
     resultsGrid.hidden = true;
     resultsEmpty.hidden = true;
   }
@@ -331,6 +339,8 @@
     if (!recipeCount) {
       resultsSkeleton.hidden = true;
       resultsMeta.hidden = true;
+      resultsHint.hidden = true;
+      resultsCount.hidden = true;
       resultsGrid.hidden = true;
       resultsEmpty.hidden = false;
       return;
@@ -338,11 +348,17 @@
 
     resultsSkeleton.hidden = true;
     if (showCount) {
-      resultsMeta.textContent = formatCount(recipeCount);
+      resultsHint.textContent = i18n.matchAnyHint;
+      resultsHint.hidden = false;
+      resultsCount.textContent = formatCount(recipeCount);
+      resultsCount.hidden = false;
       resultsMeta.hidden = false;
     } else {
       resultsMeta.hidden = true;
-      resultsMeta.textContent = '';
+      resultsHint.hidden = true;
+      resultsCount.hidden = true;
+      resultsHint.textContent = '';
+      resultsCount.textContent = '';
     }
     resultsGrid.innerHTML = recipes.map(renderRecipeCard).join('');
     resultsGrid.hidden = false;

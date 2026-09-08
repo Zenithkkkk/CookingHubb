@@ -11,6 +11,9 @@
 <% } %>
 
 <form action="/register" method="POST">
+  <% if (typeof next !== 'undefined' && next) { %>
+    <input type="hidden" name="next" value="<%= next %>">
+  <% } %>
   <label for="username"><%= t('auth.username') %></label>
   <input type="text" id="username" name="username" value="<%= typeof username !== 'undefined' ? username : '' %>" required>
 

@@ -11,6 +11,9 @@
   <% } %>
 
 <form action="/login" method="POST">
+  <% if (typeof next !== 'undefined' && next) { %>
+    <input type="hidden" name="next" value="<%= next %>">
+  <% } %>
   <label for="credential"><%= t('auth.emailOrPhone') %></label>
   <input
     type="text"

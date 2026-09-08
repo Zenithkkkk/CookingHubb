@@ -1,1 +1,199 @@
-<h1><%= t('home.hello') %></h1>
+<%- include('partials/header') %>
+
+<section class="home-hero" aria-labelledby="home-hero-title">
+  <h1 id="home-hero-title" class="home-hero-title"><%= t('home.heroTitle') %></h1>
+  <p class="home-hero-subtitle"><%= t('home.heroSubtitle') %></p>
+
+  <div class="home-fan-wrap" id="home-fan-wrap" data-home-loading="1">
+    <div class="home-fan-skeleton" id="home-fan-skeleton" aria-hidden="false" aria-busy="true">
+      <div class="skeleton home-skel-petal home-skel-petal-recipes"></div>
+      <div class="skeleton home-skel-petal home-skel-petal-tags"></div>
+      <div class="skeleton home-skel-petal home-skel-petal-share"></div>
+      <div class="skeleton home-skel-petal home-skel-petal-leaderboard"></div>
+      <div class="skeleton home-skel-petal home-skel-petal-fridge"></div>
+      <div class="skeleton home-skel-center"></div>
+    </div>
+
+    <div class="home-fan" id="home-fan" hidden aria-hidden="true" aria-label="<%= t('home.centerBrand') %>">
+      <div class="home-fan-center" aria-hidden="true">
+        <svg class="home-chef-hat" viewBox="0 0 64 64" width="42" height="42" aria-hidden="true">
+          <path d="M18 30c-5 0-9-3.8-9-8.5S13 13 18 13c1.2 0 2.3.2 3.3.7C23.2 9.5 27.3 7 32 7s8.8 2.5 10.7 6.7c1-.5 2.1-.7 3.3-.7 5 0 9 3.8 9 8.5S50 30 45 30H18z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M20 30h24v8.5c0 2.2-1.8 4-4 4H24c-2.2 0-4-1.8-4-4V30z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M22 42.5h20v8c0 2.5-2 4.5-4.5 4.5h-11c-2.5 0-4.5-2-4.5-4.5v-8z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+        </svg>
+        <span class="home-fan-brand"><%= t('home.centerBrand') %></span>
+      </div>
+
+      <a href="/recipes" class="home-petal home-petal-recipes" style="--float-delay: 0s">
+        <span class="home-petal-inner">
+          <span class="home-petal-title"><%= t('home.tileRecipes') %></span>
+          <span class="home-petal-desc"><%= t('home.tileRecipesDesc') %></span>
+        </span>
+      </a>
+
+      <a href="/tags" class="home-petal home-petal-tags" style="--float-delay: 0.35s">
+        <span class="home-petal-inner">
+          <span class="home-petal-title"><%= t('home.tileTags') %></span>
+          <span class="home-petal-desc"><%= t('home.tileTagsDesc') %></span>
+        </span>
+      </a>
+
+      <% if (currentUser) { %>
+        <a href="/recipes/new" class="home-petal home-petal-share" style="--float-delay: 0.7s">
+          <span class="home-petal-inner">
+            <span class="home-petal-title"><%= t('home.tileShare') %></span>
+            <span class="home-petal-desc"><%= t('home.tileShareDesc') %></span>
+          </span>
+        </a>
+        <a href="/fridge" class="home-petal home-petal-fridge" style="--float-delay: 1.4s">
+          <span class="home-petal-inner">
+            <span class="home-petal-title"><%= t('home.tileFridge') %></span>
+            <span class="home-petal-desc"><%= t('home.tileFridgeDesc') %></span>
+          </span>
+        </a>
+      <% } else { %>
+        <button type="button" class="home-petal home-petal-share" style="--float-delay: 0.7s" data-home-auth="share">
+          <span class="home-petal-inner">
+            <span class="home-petal-title"><%= t('home.tileShare') %></span>
+            <span class="home-petal-desc"><%= t('home.tileShareDesc') %></span>
+          </span>
+        </button>
+        <button type="button" class="home-petal home-petal-fridge" style="--float-delay: 1.4s" data-home-auth="fridge">
+          <span class="home-petal-inner">
+            <span class="home-petal-title"><%= t('home.tileFridge') %></span>
+            <span class="home-petal-desc"><%= t('home.tileFridgeDesc') %></span>
+          </span>
+        </button>
+      <% } %>
+
+      <a href="/recipes/leaderboard" class="home-petal home-petal-leaderboard" style="--float-delay: 1.05s">
+        <span class="home-petal-inner">
+          <span class="home-petal-title"><%= t('home.tileLeaderboard') %></span>
+          <span class="home-petal-desc"><%= t('home.tileLeaderboardDesc') %></span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <a href="#home-trending" class="home-explore" id="home-explore">
+    <span class="home-explore-arrow" aria-hidden="true">↓</span>
+    <span><%= t('home.explore') %></span>
+  </a>
+</section>
+
+<section id="home-trending" class="home-trending" aria-labelledby="home-trending-title">
+  <div class="home-trending-header">
+    <h2 id="home-trending-title"><%= t('home.trendingTitle') %></h2>
+    <a href="/recipes" class="home-trending-all"><%= t('home.viewAll') %></a>
+  </div>
+
+  <% if (!featuredRecipes || featuredRecipes.length === 0) { %>
+    <p class="home-trending-empty"><%= t('home.emptyFeatured') %></p>
+  <% } else { %>
+    <div class="home-featured-grid">
+      <% featuredRecipes.forEach(recipe => { %>
+        <% const imgSrc = ((recipe.imageThumb || recipe.image || '').startsWith('http') || (recipe.imageThumb || recipe.image || '').startsWith('/'))
+          ? (recipe.imageThumb || recipe.image)
+          : '/images/default-recipe.png'; %>
+        <a href="/recipes/<%= recipe.slug %>" class="home-featured-card">
+          <div class="home-featured-image-wrap">
+            <img src="<%= imgSrc %>" alt="<%= recipe.title %>">
+          </div>
+          <div class="home-featured-meta">
+            <h3 class="home-featured-title"><%= recipe.title %></h3>
+            <p class="home-featured-category">
+              <%= t('recipes.categoryLabel') %>
+              <%= t('categories.' + recipe.category) || recipe.category %>
+            </p>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<script>
+(function () {
+  var wrap = document.getElementById('home-fan-wrap');
+  var skel = document.getElementById('home-fan-skeleton');
+  var fan = document.getElementById('home-fan');
+  if (!wrap || !skel || !fan) return;
+
+  function reveal() {
+    skel.hidden = true;
+    skel.setAttribute('aria-hidden', 'true');
+    skel.setAttribute('aria-busy', 'false');
+    fan.hidden = false;
+    fan.setAttribute('aria-hidden', 'false');
+    wrap.removeAttribute('data-home-loading');
+    wrap.classList.add('is-ready');
+  }
+
+  window.setTimeout(reveal, 650);
+})();
+</script>
+
+<% if (!currentUser) { %>
+<div id="home-auth-modal" class="wechat-share-modal auth-prompt-modal" hidden aria-hidden="true">
+  <div class="wechat-share-backdrop" data-home-auth-close></div>
+  <div class="wechat-share-dialog" role="dialog" aria-modal="true" aria-labelledby="home-auth-message">
+    <button type="button" class="wechat-share-close" data-home-auth-close aria-label="Close">&times;</button>
+    <p id="home-auth-message" class="auth-prompt-message"><%= t('home.loginPromptFridge') %></p>
+    <p class="auth-prompt-links">
+      <a id="home-auth-login" href="/login"><%= t('nav.login') %></a>
+      <span class="auth-prompt-separator">/</span>
+      <a id="home-auth-register" href="/register"><%= t('nav.register') %></a>
+    </p>
+  </div>
+</div>
+<script>
+(function () {
+  var modal = document.getElementById('home-auth-modal');
+  var message = document.getElementById('home-auth-message');
+  var loginLink = document.getElementById('home-auth-login');
+  var registerLink = document.getElementById('home-auth-register');
+  if (!modal || !message) return;
+
+  var prompts = {
+    fridge: <%= JSON.stringify(t('home.loginPromptFridge')) %>,
+    share: <%= JSON.stringify(t('home.loginPromptShare')) %>
+  };
+  var nextPaths = {
+    fridge: '/fridge',
+    share: '/recipes/new'
+  };
+
+  function openModal(kind) {
+    message.textContent = prompts[kind] || prompts.fridge;
+    var next = nextPaths[kind] || '/';
+    if (loginLink) loginLink.href = '/login?next=' + encodeURIComponent(next);
+    if (registerLink) registerLink.href = '/register?next=' + encodeURIComponent(next);
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('wechat-modal-open');
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('wechat-modal-open');
+  }
+
+  document.querySelectorAll('[data-home-auth]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      openModal(el.getAttribute('data-home-auth'));
+    });
+  });
+
+  modal.querySelectorAll('[data-home-auth-close]').forEach(function (el) {
+    el.addEventListener('click', closeModal);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+})();
+</script>
+<% } %>
+
+<%- include('partials/footer') %>

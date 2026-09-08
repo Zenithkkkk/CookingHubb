@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'en' %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,32 +9,58 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 </head>
-<body>
-  <nav>
-    <a href="/" class="nav-brand">🍳 Smart CookingHub</a>
-    <div class="nav-center-links">
-      <a href="/recipes/leaderboard"><%= t('nav.leaderboard') %></a>
-      <a href="/fridge"><%= t('nav.myFridge') %></a>
-      <a href="/tags"><%= t('nav.tags') %></a>
-      <a href="/recipes"><%= t('nav.recipes') %></a>
-      <% if (currentUser) { %>
-        <a href="/recipes/liked"><%= t('nav.likedRecipes') %></a>
-        <a href="/profile/<%= currentUser.username %>"><%= t('nav.myProfile') %></a>
-      <% } %>
-      <select
-        class="lang-select"
-        id="lang-select"
-        aria-label="Select language"
-      >
-        <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Germany</option>
-        <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Spanish</option>
-        <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>Chinese</option>
-        <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
-      </select>
-      <a href="/contact" class="nav-contact-btn"><%= t('nav.contactUs') %></a>
-    </div>
+<body class="<%= typeof isHomePage !== 'undefined' && isHomePage ? 'page-home' : '' %>">
+  <nav class="<%= typeof isHomePage !== 'undefined' && isHomePage ? 'nav-home' : 'nav-inner' %>">
+    <% if (typeof isHomePage !== 'undefined' && isHomePage) { %>
+      <span class="nav-brand nav-brand-current">🍳 Smart CookingHub</span>
+    <% } else { %>
+      <a href="/" class="nav-brand">🍳 Smart CookingHub</a>
+    <% } %>
+
+    <% if (typeof isHomePage !== 'undefined' && isHomePage) { %>
+      <div class="nav-center-links nav-home-spacer" aria-hidden="true"></div>
+    <% } else { %>
+      <div class="nav-center-links">
+        <a href="/"><%= t('nav.home') %></a>
+        <a href="/recipes/leaderboard"><%= t('nav.leaderboard') %></a>
+        <a href="/fridge"><%= t('nav.myFridge') %></a>
+        <a href="/tags"><%= t('nav.tags') %></a>
+        <a href="/recipes"><%= t('nav.recipes') %></a>
+        <% if (currentUser) { %>
+          <a href="/recipes/liked"><%= t('nav.likedRecipes') %></a>
+          <a href="/profile/<%= currentUser.username %>"><%= t('nav.myProfile') %></a>
+        <% } %>
+        <select
+          class="lang-select"
+          id="lang-select"
+          aria-label="Select language"
+        >
+          <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Germany</option>
+          <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Spanish</option>
+          <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>Chinese</option>
+          <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+        </select>
+        <a href="/contact" class="nav-contact-btn"><%= t('nav.contactUs') %></a>
+      </div>
+    <% } %>
+
     <div class="nav-actions">
+      <% if (typeof isHomePage !== 'undefined' && isHomePage) { %>
+        <select
+          class="lang-select"
+          id="lang-select"
+          aria-label="Select language"
+        >
+          <option value="de" <%= lang === 'de' ? 'selected' : '' %>>Germany</option>
+          <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Spanish</option>
+          <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>Chinese</option>
+          <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+        </select>
+      <% } %>
       <% if (currentUser) { %>
+        <% if (typeof isHomePage !== 'undefined' && isHomePage) { %>
+          <a href="/profile/<%= currentUser.username %>"><%= t('nav.myProfile') %></a>
+        <% } %>
         <a href="/logout"><%= t('nav.logout') %></a>
       <% } else { %>
         <a href="/login"><%= t('nav.login') %></a>
@@ -42,6 +68,6 @@
       <% } %>
     </div>
   </nav>
-  <main>
+  <main class="<%= typeof isHomePage !== 'undefined' && isHomePage ? 'main-home' : '' %>">
 
   <!-- closure at footer.ejs -->
