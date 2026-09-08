@@ -4,7 +4,7 @@ A full-stack recipe sharing platform where users can create, discover, and inter
 
 ## Live Demo
 
-[http://8.148.229.49/#home-trending]
+[http://8.148.229.49]
 
 ## Features
 
