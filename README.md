@@ -4,7 +4,7 @@ A full-stack recipe sharing platform where users can create, discover, and inter
 
 ## Live Demo
 
-[https://webe2-finalproject.onrender.com](https://webe2-finalproject.onrender.com)
+[http://8.148.229.49/#home-trending]
 
 ## Features
 
